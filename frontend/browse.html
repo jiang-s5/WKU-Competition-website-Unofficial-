@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>浏览赛事 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div>温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a class="active" href="browse.html">浏览赛事</a>
+        <a href="detail.html">赛事详情</a>
+        <a href="teams.html">寻找团队</a>
+        <a href="profile.html">个人主页</a>
+        <a href="feedback.html">意见反馈</a>
+        <a href="forum.html">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>浏览赛事列表</h2>
+          <p class="muted">按赛事级别、关键词、年份、月份筛选，快速锁定心仪的科创比赛。</p>
+        </div>
+      </div>
+
+      <div class="form-grid" style="grid-template-columns:2fr 1fr 1fr 1fr auto auto;">
+        <input class="input" id="keyword" type="text" placeholder="搜索比赛名称、方向或关键词">
+        <select class="select" id="level">
+          <option value="">赛事级别</option>
+          <option value="国家级">国家级</option>
+          <option value="省部级">省部级</option>
+          <option value="校级">校级</option>
+        </select>
+        <select class="select" id="year">
+          <option value="">年份</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+        </select>
+        <select class="select" id="month">
+          <option value="">月份</option>
+          <option value="3">3月</option>
+          <option value="5">5月</option>
+          <option value="7">7月</option>
+          <option value="9">9月</option>
+          <option value="11">11月</option>
+          <option value="12">12月</option>
+        </select>
+        <button class="btn btn-primary" type="button" onclick="applyFilters()">筛选</button>
+        <button class="btn btn-secondary" type="button" onclick="resetFilters()">清除</button>
+      </div>
+
+      <div id="list" class="grid-2" style="margin-top:22px;"></div>
+    </section>
+
+    <div class="footer">点击“查看赛事详情”会跳转到独立详情页</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script src="frontend-i18n.js"></script>
+  <script>
+    const events = [
+      {
+        slug: "aigc-innovation",
+        title: "中国高校计算机大赛AIGC创新赛",
+        level: "国家级",
+        year: "",
+        month: "",
+        category: "AIGC",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        desc: "聚焦 AIGC 创新应用与实践展示，具体规则、日程与报名要求请以官网公布为准。",
+        official: "https://aigc.vivo.com.cn/#/home"
+      },
+      {
+        slug: "digital-skills-computing",
+        title: "全国大学生数字技能应用大赛计算机技能应用赛",
+        level: "国家级",
+        year: "",
+        month: "",
+        category: "计算机技能应用",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        desc: "面向计算机技能应用方向，具体赛项说明、报名方式与时间安排请以官网公布为准。",
+        official: "https://www.cnccac.com/"
+      },
+      {
+        slug: "digital-ai-application",
+        title: "全国大学生数字应用大赛人工智能应用赛",
+        level: "国家级",
+        year: "",
+        month: "",
+        category: "人工智能应用",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        desc: "聚焦人工智能应用实践方向，具体赛道设置、报名流程与时间请以官网公布为准。",
+        official: "https://www.cnccac.com/rgzn"
+      },
+      {
+        slug: "ai-innovation-entrepreneurship",
+        title: "全国大学生人工智能+创新创业大赛",
+        level: "国家级",
+        year: "",
+        month: "",
+        category: "人工智能+创新创业",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        desc: "面向人工智能与创新创业结合方向，赛程、规则和报名要求请以官网公布为准。",
+        official: "http://rgzn.52jingsai.com"
+      }
+    ];
+
+    function render(list) {
+      document.getElementById("list").innerHTML = list.map((event) => `
+        <article class="card">
+          <div class="tags">
+            <span class="pill-link">${event.category}</span>
+            <span class="pill-link">${event.level}</span>
+            ${event.year && event.month ? `<span class="pill-link">${event.year}年${event.month}月</span>` : ""}
+          </div>
+          <h3>${event.title}</h3>
+          <p class="muted">${event.desc}</p>
+          <div class="meta">比赛时间：${event.time}</div>
+          <div class="meta">比赛地点：${event.place}</div>
+          <div class="card-actions" style="margin-top:14px;">
+            <a class="ghost-btn" href="detail.html?slug=${encodeURIComponent(event.slug)}">查看赛事详情</a>
+            <a class="pill-link" href="${event.official}" target="_blank" rel="noreferrer">官网入口</a>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function applyFilters() {
+      const keyword = document.getElementById("keyword").value.trim().toLowerCase();
+      const level = document.getElementById("level").value;
+      const year = document.getElementById("year").value;
+      const month = document.getElementById("month").value;
+      const filtered = events.filter((event) => {
+        const hitKeyword = !keyword || (event.title + event.category + event.desc).toLowerCase().includes(keyword);
+        return hitKeyword && (!level || event.level === level) && (!year || event.year === year) && (!month || event.month === month);
+      });
+      render(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById("keyword").value = "";
+      document.getElementById("level").value = "";
+      document.getElementById("year").value = "";
+      document.getElementById("month").value = "";
+      render(events);
+    }
+
+    function statusText(key) {
+      return FrontendI18n.t("common", key) || {
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录"
+      }[key];
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "头";
+    }
+
+    function statusAvatarMarkup(user) {
+      if (user && user.avatar) {
+        return `<span class="status-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></span>`;
+      }
+      return `<span class="status-avatar"><span class="status-avatar-fallback">${initials(user && (user.name || user.username))}</span></span>`;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${statusText("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${statusText("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${statusText("signed_out")}</span>`;
+      }
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      window.location.href = "index.html";
+    }
+
+    document.addEventListener("site-lang-change", renderStatus);
+    FrontendI18n.init("browse");
+    renderStatus();
+    render(events);
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid-two section">
+  <article class="panel">
+    <span class="eyebrow">{{ competition["category"] }}</span>
+    <h1>{{ competition["title"] }}</h1>
+    <p>{{ competition["summary"] }}</p>
+  </article>
+  <aside class="panel">
+    <div class="meta-block">
+      <strong>Time</strong>
+      <span>
+        {% if competition["start_at"] == competition["end_at"] %}
+          {{ competition["start_at"] }}
+        {% else %}
+          {{ competition["start_at"] }} - {{ competition["end_at"] }}
+        {% endif %}
+      </span>
+    </div>
+    <div class="meta-block"><strong>Location</strong><span>{{ competition["location"] }}</span></div>
+    <div class="actions">
+      <a class="btn primary" href="{{ competition['reference_url'] }}" target="_blank" rel="noreferrer">Reference</a>
+      <a class="btn secondary" href="{{ competition['official_url'] }}" target="_blank" rel="noreferrer">Official</a>
+    </div>
+  </aside>
+</section>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid-two section">
+  <article class="panel">
+    <span class="eyebrow">{{ t("nav_teams") }}</span>
+    <h1>{{ t("nav_teams") }}</h1>
+    <div class="list">
+      {% for team in teams %}
+        <div class="list-card">
+          <strong>{{ team["name"] }}</strong>
+          <span>{{ team["target_event"] }}</span>
+          <p>{{ team["description"] }}</p>
+          <small>{{ team["need_text"] }} | {{ team["contact"] }}</small>
+          {% if current_user %}
+            <form method="post" action="{{ url_for('web.join_team', team_id=team['id']) }}">
+              <button class="btn secondary" type="submit">{{ t("join_team") }}</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <span class="eyebrow">{{ t("create_team") }}</span>
+    {% if current_user %}
+      <form class="stack" method="post" action="{{ url_for('web.teams') }}">
+        <input name="name" placeholder="Team Name" required>
+        <input name="target_event" placeholder="Target Event" required>
+        <input name="need_text" placeholder="Need" required>
+        <input name="contact" placeholder="Contact" required>
+        <textarea name="description" placeholder="Description" required></textarea>
+        <button class="btn primary" type="submit">{{ t("create_team") }}</button>
+      </form>
+    {% else %}
+      <p>{{ t("profile_locked") }}</p>
+    {% endif %}
+
+    {% if my_team %}
+      <div class="subpanel">
+        <h3>{{ my_team["name"] }}</h3>
+        <p>Status: {{ my_team["status"] }}</p>
+        <div class="stack">
+          {% for item in pending_requests %}
+            <div class="mini-card">
+              <strong>{{ item["real_name"] }}</strong>
+              <span>@{{ item["username"] }}</span>
+              <div class="actions">
+                <form method="post" action="{{ url_for('web.handle_team_request', request_id=item['id'], action='approve') }}">
+                  <button class="btn secondary" type="submit">{{ t("approve") }}</button>
+                </form>
+                <form method="post" action="{{ url_for('web.handle_team_request', request_id=item['id'], action='reject') }}">
+                  <button class="btn ghost" type="submit">{{ t("reject") }}</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

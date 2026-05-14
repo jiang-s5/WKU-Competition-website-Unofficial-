@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+{% set admin_title = "管理总览" if current_lang != "en" else "Admin Overview" %}
+{% set admin_intro = "这里负责网站内容与赛事信息维护，其余审核与用户处理已经拆到独立后台页面。" if current_lang != "en" else "Manage site content and competitions here. Review, forum, feedback, and user actions now live in dedicated admin pages." %}
+{% include "_admin_nav.html" %}
+
+<section class="grid-two section">
+  <article class="panel">
+    <h2>{% if current_lang == "en" %}Site Content{% else %}站点内容管理{% endif %}</h2>
+    <form method="post" action="{{ url_for('web.admin_update_settings') }}" class="stack">
+      <input type="hidden" name="next" value="{{ url_for('web.admin') }}">
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Site Name{% else %}站点名称{% endif %}</span>
+        <input name="site_name" value="{{ site_setting('site_name', t('site_name')) }}" required>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Hero Eyebrow{% else %}首页眉标{% endif %}</span>
+        <input name="hero_eyebrow" value="{{ site_setting('hero_eyebrow', 'WKU AI Club Competition Platform') }}" required>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Hero Title{% else %}首页主标题{% endif %}</span>
+        <textarea name="hero_title" required>{{ site_setting('hero_title', t('hero_title')) }}</textarea>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Hero Subtitle{% else %}首页副标题{% endif %}</span>
+        <textarea name="hero_subtitle" required>{{ site_setting('hero_subtitle', t('hero_subtitle')) }}</textarea>
+      </label>
+      <button class="btn primary" type="submit">{% if current_lang == "en" %}Save Content{% else %}保存站点内容{% endif %}</button>
+    </form>
+  </article>
+
+  <article class="panel">
+    <h2>{% if current_lang == "en" %}Create Competition{% else %}新增赛事{% endif %}</h2>
+    <form method="post" action="{{ url_for('web.admin_create_competition') }}" class="stack">
+      <input type="hidden" name="next" value="{{ url_for('web.admin') }}">
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Title{% else %}赛事名称{% endif %}</span>
+        <input name="title" required>
+      </label>
+      <label class="field-label">
+        <span>Slug</span>
+        <input name="slug" placeholder="{% if current_lang == 'en' %}auto-generated if empty{% else %}留空则自动生成{% endif %}">
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Category{% else %}赛事类别{% endif %}</span>
+        <input name="category" required>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Summary{% else %}赛事简介{% endif %}</span>
+        <textarea name="summary" required></textarea>
+      </label>
+      <div class="form-grid">
+        <label class="field-label">
+          <span>{% if current_lang == "en" %}Start Time{% else %}开始时间{% endif %}</span>
+          <input name="start_at" placeholder="2026-11-09 00:00:00" required>
+        </label>
+        <label class="field-label">
+          <span>{% if current_lang == "en" %}End Time{% else %}结束时间{% endif %}</span>
+          <input name="end_at" placeholder="2026-12-20 00:00:00" required>
+        </label>
+      </div>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Location{% else %}地点 / 形式{% endif %}</span>
+        <input name="location" required>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Official URL{% else %}竞赛官网链接{% endif %}</span>
+        <input name="official_url" placeholder="https://..." required>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Reference URL{% else %}学院通知链接{% endif %}</span>
+        <input name="reference_url" placeholder="https://..." required>
+      </label>
+      <label class="field-label">
+        <span>{% if current_lang == "en" %}Status{% else %}发布状态{% endif %}</span>
+        <select name="status">
+          <option value="draft">{% if current_lang == "en" %}Draft{% else %}草稿{% endif %}</option>
+          <option value="published">{% if current_lang == "en" %}Published{% else %}已发布{% endif %}</option>
+        </select>
+      </label>
+      <button class="btn primary" type="submit">{% if current_lang == "en" %}Create Competition{% else %}创建赛事{% endif %}</button>
+    </form>
+  </article>
+</section>
+
+<section class="panel section">
+  <h2>{% if current_lang == "en" %}Competition Management{% else %}赛事管理{% endif %}</h2>
+  <div class="stack">
+    {% for competition in competitions %}
+      <div class="admin-card">
+        <form method="post" action="{{ url_for('web.admin_update_competition', competition_id=competition['id']) }}" class="stack">
+          <input type="hidden" name="next" value="{{ url_for('web.admin') }}">
+          <div class="form-grid">
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}Title{% else %}赛事名称{% endif %}</span>
+              <input name="title" value="{{ competition['title'] }}" required>
+            </label>
+            <label class="field-label">
+              <span>Slug</span>
+              <input name="slug" value="{{ competition['slug'] }}" required>
+            </label>
+          </div>
+          <div class="form-grid">
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}Category{% else %}类别{% endif %}</span>
+              <input name="category" value="{{ competition['category'] }}" required>
+            </label>
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}Status{% else %}状态{% endif %}</span>
+              <select name="status">
+                <option value="draft" {% if competition['status'] == 'draft' %}selected{% endif %}>{% if current_lang == "en" %}Draft{% else %}草稿{% endif %}</option>
+                <option value="published" {% if competition['status'] == 'published' %}selected{% endif %}>{% if current_lang == "en" %}Published{% else %}已发布{% endif %}</option>
+              </select>
+            </label>
+          </div>
+          <label class="field-label">
+            <span>{% if current_lang == "en" %}Summary{% else %}简介{% endif %}</span>
+            <textarea name="summary" required>{{ competition['summary'] }}</textarea>
+          </label>
+          <div class="form-grid">
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}Start Time{% else %}开始时间{% endif %}</span>
+              <input name="start_at" value="{{ competition['start_at'] }}" required>
+            </label>
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}End Time{% else %}结束时间{% endif %}</span>
+              <input name="end_at" value="{{ competition['end_at'] }}" required>
+            </label>
+          </div>
+          <label class="field-label">
+            <span>{% if current_lang == "en" %}Location{% else %}地点 / 形式{% endif %}</span>
+            <input name="location" value="{{ competition['location'] }}" required>
+          </label>
+          <div class="form-grid">
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}Official URL{% else %}竞赛官网{% endif %}</span>
+              <input name="official_url" value="{{ competition['official_url'] }}" required>
+            </label>
+            <label class="field-label">
+              <span>{% if current_lang == "en" %}Reference URL{% else %}通知链接{% endif %}</span>
+              <input name="reference_url" value="{{ competition['reference_url'] }}" required>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="btn primary" type="submit">{% if current_lang == "en" %}Save Competition{% else %}保存赛事{% endif %}</button>
+          </div>
+        </form>
+        <form method="post" action="{{ url_for('web.admin_delete_competition', competition_id=competition['id']) }}">
+          <input type="hidden" name="next" value="{{ url_for('web.admin') }}">
+          <button class="btn ghost danger-btn" type="submit">{% if current_lang == "en" %}Delete{% else %}删除赛事{% endif %}</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="mini-card">
+        <strong>{% if current_lang == "en" %}No competitions yet{% else %}暂无赛事{% endif %}</strong>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>意见反馈管理 - 管理员后台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-badge">反</div>
+        <div>意见反馈管理后台</div>
+      </div>
+      <a class="admin-chip" href="admin-home.html">返回总览</a>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-menu-link" href="admin-home.html">管理总览</a>
+        <a class="admin-menu-link" href="admin-review.html">招募审核</a>
+        <a class="admin-menu-link active" href="admin-feedback.html">意见反馈</a>
+        <a class="admin-menu-link" href="admin-forum.html">论坛管理</a>
+        <a class="admin-menu-link" href="admin-users.html">用户管理</a>
+      </aside>
+
+      <main class="admin-main-panel">
+        <h1>前台意见反馈</h1>
+        <p class="admin-subtitle">学生在前台提交的建议和问题会汇总到这里，管理员可以标记为已处理。</p>
+        <div class="admin-list" id="feedbackList" style="margin-top:22px;"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    function renderFeedbacks() {
+      const feedbacks = PlatformData.getFeedbacks();
+      document.getElementById("feedbackList").innerHTML = feedbacks.length ? feedbacks.map((item) => `
+        <article class="admin-card">
+          <h3>${item.title}</h3>
+          <p class="admin-meta">提交人：${item.user || "匿名"}</p>
+          <p class="admin-meta">类型：${item.type}</p>
+          <p class="admin-text">${item.content}</p>
+          <div class="admin-actions">
+            <span class="admin-status ${item.status === "done" ? "live" : "draft"}">${item.status}</span>
+            <button class="admin-btn primary" type="button" onclick="markFeedback(${item.id}, 'done')">标记已处理</button>
+            <button class="admin-btn secondary" type="button" onclick="markFeedback(${item.id}, 'new')">标记未处理</button>
+          </div>
+        </article>
+      `).join("") : '<div class="admin-card"><h3>暂无反馈</h3><p class="admin-text">当前还没有来自前台的新反馈。</p></div>';
+    }
+
+    function markFeedback(id, status) {
+      const feedbacks = PlatformData.getFeedbacks();
+      const target = feedbacks.find((item) => item.id === id);
+      if (!target) return;
+      target.status = status;
+      localStorage.setItem("wku-feedback-list", JSON.stringify(feedbacks));
+      renderFeedbacks();
+    }
+
+    renderFeedbacks();
+  </script>
+</body>
+</html>

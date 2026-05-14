@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>论坛 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div>温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a href="browse.html">浏览赛事</a>
+        <a href="detail.html">赛事详情</a>
+        <a href="teams.html">寻找团队</a>
+        <a href="profile.html">个人主页</a>
+        <a href="feedback.html">意见反馈</a>
+        <a class="active" href="forum.html">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>学生论坛</h2>
+          <p class="muted">同学们可以在这里交流备赛资料、组队想法、参赛经验和赛事问题。</p>
+        </div>
+      </div>
+
+      <div class="forum-layout">
+        <div class="card">
+          <div class="eyebrow">发布帖子</div>
+          <div class="form-grid" style="margin-top:16px;">
+            <input class="input" id="postTitle" type="text" placeholder="帖子标题">
+            <textarea class="textarea" id="postContent" rows="8" placeholder="写下你的问题、经验或组队想法"></textarea>
+            <button class="btn btn-primary" type="button" onclick="submitPost()">发布帖子</button>
+          </div>
+          <p class="muted" id="forumHint" style="margin-top:14px;">登录后可以发帖；若账号被禁言，将只能浏览不能发帖。</p>
+        </div>
+
+        <div class="forum-feed" id="forumList"></div>
+      </div>
+    </section>
+
+    <div class="footer">论坛内容同步到管理员后台的论坛管理页</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script src="frontend-i18n.js"></script>
+  <script>
+    let editingPostId = null;
+    const expandedComments = new Set();
+
+    function formatTime(value) {
+      return new Date(value).toLocaleString("zh-CN", { hour12: false });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function statusText(key) {
+      return FrontendI18n.t("common", key) || {
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录"
+      }[key];
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "匿";
+    }
+
+    function displayIdentity(record) {
+      return record && (record.authorUsername || record.author)
+        ? (record.authorUsername || record.author)
+        : "anonymous";
+    }
+
+    function statusAvatarMarkup(user) {
+      if (user && user.avatar) {
+        return `<span class="status-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></span>`;
+      }
+      return `<span class="status-avatar"><span class="status-avatar-fallback">${initials(user && (user.name || user.username))}</span></span>`;
+    }
+
+    function forumAvatarMarkup(post) {
+      const user = PlatformData.getUserByIdentity(post.authorUsername || post.author);
+      if (user && user.avatar) {
+        return `<div class="forum-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></div>`;
+      }
+      return `<div class="forum-avatar">${initials(displayIdentity(post))}</div>`;
+    }
+
+    function commentAvatarMarkup(comment) {
+      const user = PlatformData.getUserByIdentity(comment.authorUsername || comment.author);
+      if (user && user.avatar) {
+        return `<div class="forum-avatar forum-comment-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></div>`;
+      }
+      return `<div class="forum-avatar forum-comment-avatar">${initials(displayIdentity(comment))}</div>`;
+    }
+
+    function currentActor() {
+      const user = PlatformData.getCurrentUser();
+      return user ? (user.username || user.name) : "";
+    }
+
+    function hasReaction(post, reactionType) {
+      const actor = currentActor();
+      const keyMap = {
+        like: "likeUsers",
+        favorite: "favoriteUsers",
+        dislike: "dislikeUsers"
+      };
+      return !!(actor && post[keyMap[reactionType]] && post[keyMap[reactionType]].includes(actor));
+    }
+
+    function renderCommentPanel(post) {
+      if (!expandedComments.has(post.id)) {
+        return "";
+      }
+
+      const comments = post.commentsList || [];
+      const currentUser = PlatformData.getCurrentUser();
+      let helperText = "登录后可发表评论。";
+      let composerDisabled = !currentUser;
+      if (currentUser && PlatformData.isMuted()) {
+        helperText = "当前账号已被禁言，暂时无法发表评论。";
+      } else if (currentUser && PlatformData.isBanned()) {
+        helperText = "当前账号已被封禁，暂时无法发表评论。";
+      } else if (currentUser) {
+        helperText = "在这里继续交流观点、补充资料或回应队友。";
+        composerDisabled = false;
+      }
+
+      return `
+        <div class="forum-comment-panel">
+          <div class="forum-comment-list">
+            ${comments.length ? comments.map((comment) => `
+              <div class="forum-comment">
+                ${commentAvatarMarkup(comment)}
+                <div>
+                  <div class="forum-comment-head">
+                    <strong>@${escapeHtml(displayIdentity(comment))}</strong>
+                    <span>${formatTime(comment.createdAt)}</span>
+                  </div>
+                  <div class="forum-comment-body">${escapeHtml(comment.content)}</div>
+                </div>
+              </div>
+            `).join("") : `<div class="forum-comment-empty">还没有评论，欢迎你来补第一条。</div>`}
+          </div>
+          <div class="forum-comment-composer">
+            <textarea class="textarea" id="commentInput-${post.id}" rows="3" placeholder="写下你的评论、补充观点或建议……" ${composerDisabled ? "disabled" : ""}></textarea>
+            <div class="forum-comment-actions">
+              <span class="muted">${helperText}</span>
+              <button class="btn btn-secondary" type="button" onclick="submitComment(${post.id})" ${composerDisabled ? "disabled" : ""}>发表评论</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${statusText("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${statusText("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${statusText("signed_out")}</span>`;
+      }
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      window.location.href = "index.html";
+    }
+
+    function renderPosts() {
+      const currentUser = PlatformData.getCurrentUser();
+      const posts = PlatformData.getForumPosts().filter((item) => item.status !== "hidden");
+      document.getElementById("forumList").innerHTML = posts.map((post) => `
+        <article class="forum-post">
+          <div class="forum-topline">
+            <span>${post.updatedAt ? "已编辑" : "最新发布"}</span>
+            <span>${formatTime(post.updatedAt || post.createdAt)}</span>
+          </div>
+          <h3 class="forum-title">${escapeHtml(post.title)}</h3>
+          <div class="forum-author">
+            ${forumAvatarMarkup(post)}
+            <div>@${escapeHtml(displayIdentity(post))}</div>
+          </div>
+          <div class="forum-body">${escapeHtml(post.content)}</div>
+          <div class="forum-actions">
+            <div class="forum-stats">
+              <span>浏览 ${PlatformData.getForumCounts(post).views}</span>
+            </div>
+            ${currentUser && (post.author === currentUser.name || post.authorUsername === currentUser.username) ? `
+              <div class="forum-owner-actions">
+                <button class="ghost-btn" type="button" onclick="startEditPost(${post.id})">编辑</button>
+                <button class="btn btn-secondary" type="button" onclick="deletePost(${post.id})">删除</button>
+              </div>
+            ` : ""}
+          </div>
+          <div class="forum-react-row">
+            <button class="forum-react-btn ${hasReaction(post, "like") ? "active" : ""}" type="button" onclick="toggleReaction(${post.id}, 'like')">赞同 ${PlatformData.getForumCounts(post).likes}</button>
+            <button class="forum-react-btn ${hasReaction(post, "favorite") ? "active" : ""}" type="button" onclick="toggleReaction(${post.id}, 'favorite')">收藏 ${PlatformData.getForumCounts(post).favorites}</button>
+            <button class="forum-react-btn ${hasReaction(post, "dislike") ? "active" : ""}" type="button" onclick="toggleReaction(${post.id}, 'dislike')">不赞同 ${PlatformData.getForumCounts(post).dislikes}</button>
+            <button class="forum-react-btn ${expandedComments.has(post.id) ? "active" : ""}" type="button" onclick="toggleComments(${post.id})">评论 ${PlatformData.getForumCounts(post).comments}</button>
+          </div>
+          ${renderCommentPanel(post)}
+        </article>
+      `).join("");
+    }
+
+    function toggleReaction(postId, reactionType) {
+      const result = PlatformData.toggleForumReaction(postId, reactionType);
+      if (!result.ok) {
+        if (result.reason === "login") {
+          localStorage.setItem("wku-platform-return", "forum.html");
+          alert("请先登录或注册后再参与互动。");
+          window.location.href = "index.html";
+          return;
+        }
+        if (result.reason === "banned") {
+          alert("当前账号已被封禁，无法继续进行互动。");
+          return;
+        }
+        alert("当前操作未成功，请稍后再试。");
+        return;
+      }
+      renderPosts();
+    }
+
+    function toggleComments(postId) {
+      if (expandedComments.has(postId)) {
+        expandedComments.delete(postId);
+      } else {
+        expandedComments.add(postId);
+      }
+      renderPosts();
+    }
+
+    function submitComment(postId) {
+      const field = document.getElementById(`commentInput-${postId}`);
+      const content = field ? field.value : "";
+      const result = PlatformData.addForumComment(postId, content);
+      if (!result.ok) {
+        if (result.reason === "login") {
+          localStorage.setItem("wku-platform-return", "forum.html");
+          alert("请先登录或注册后再发表评论。");
+          window.location.href = "index.html";
+          return;
+        }
+        if (result.reason === "muted") {
+          alert("当前账号已被禁言，暂时无法发表评论。");
+          return;
+        }
+        if (result.reason === "banned") {
+          alert("当前账号已被封禁，暂时无法发表评论。");
+          return;
+        }
+        if (result.reason === "empty") {
+          alert("评论内容不能为空。");
+          return;
+        }
+        alert("评论提交失败，请稍后再试。");
+        return;
+      }
+      expandedComments.add(postId);
+      renderPosts();
+    }
+
+    function submitPost() {
+      const currentUser = PlatformData.getCurrentUserName();
+      if (!currentUser) {
+        localStorage.setItem("wku-platform-return", "forum.html");
+        alert("请先登录或注册后再发帖。");
+        window.location.href = "index.html";
+        return;
+      }
+      if (PlatformData.isBanned()) {
+        alert("当前账号已被封禁，无法发帖。");
+        return;
+      }
+      if (PlatformData.isMuted()) {
+        alert("当前账号已被禁言，暂时无法发帖。");
+        return;
+      }
+      PlatformData.addForumPost({
+        title: document.getElementById("postTitle").value.trim() || "未命名帖子",
+        content: document.getElementById("postContent").value.trim() || "暂无正文"
+      });
+      document.getElementById("postTitle").value = "";
+      document.getElementById("postContent").value = "";
+      editingPostId = null;
+      renderPosts();
+      alert("帖子已发布。");
+    }
+
+    function startEditPost(postId) {
+      const post = PlatformData.getForumPosts().find((item) => item.id === postId);
+      if (!post) return;
+      editingPostId = postId;
+      document.getElementById("postTitle").value = post.title;
+      document.getElementById("postContent").value = post.content;
+      document.querySelector(".eyebrow").textContent = "编辑帖子";
+      document.querySelector("#forumHint").textContent = "你正在编辑自己的帖子，修改后再次点击按钮即可保存。";
+      const button = document.querySelector("#postContent").parentElement.querySelector("button");
+      button.textContent = "保存修改";
+      button.onclick = saveEditPost;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function saveEditPost() {
+      if (!editingPostId) return;
+      const result = PlatformData.updateForumPost(editingPostId, {
+        title: document.getElementById("postTitle").value.trim() || "未命名帖子",
+        content: document.getElementById("postContent").value.trim() || "暂无正文"
+      });
+      if (!result.ok) {
+        alert("只能编辑自己的帖子。");
+        return;
+      }
+      document.getElementById("postTitle").value = "";
+      document.getElementById("postContent").value = "";
+      editingPostId = null;
+      document.querySelector(".eyebrow").textContent = "发布帖子";
+      document.querySelector("#forumHint").textContent = "登录后可以发帖；若账号被禁言，将只能浏览不能发帖。";
+      const button = document.querySelector("#postContent").parentElement.querySelector("button");
+      button.textContent = "发布帖子";
+      button.onclick = submitPost;
+      renderPosts();
+      alert("帖子已更新。");
+    }
+
+    function deletePost(postId) {
+      const result = PlatformData.deleteForumPost(postId);
+      if (!result.ok) {
+        alert("只能删除自己的帖子。");
+        return;
+      }
+      renderPosts();
+      alert("帖子已删除。");
+    }
+
+    document.addEventListener("site-lang-change", renderStatus);
+    FrontendI18n.init("forum");
+    renderStatus();
+    renderPosts();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel section narrow">
+  <span class="eyebrow">{{ t("nav_feedback") }}</span>
+  <h1>{{ t("nav_feedback") }}</h1>
+  {% if current_user %}
+    <form class="stack" method="post" action="{{ url_for('web.feedback') }}">
+      <textarea name="content" placeholder="Tell us what competition or feature you want to see next." required></textarea>
+      <button class="btn primary" type="submit">{{ t("submit_feedback") }}</button>
+    </form>
+  {% else %}
+    <p>{{ t("profile_locked") }}</p>
+  {% endif %}
+</section>
+{% endblock %}

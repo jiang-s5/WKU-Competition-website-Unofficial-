@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+{% set admin_title = "团队审核" if current_lang != "en" else "Team Review" %}
+{% set admin_intro = "这里集中处理学生创建的新队伍招募申请。通过后会进入前台展示，驳回后不会公开。" if current_lang != "en" else "Review new team recruitment requests here. Approved teams become visible on the public site." %}
+{% include "_admin_nav.html" %}
+
+<section class="panel section">
+  <h2>{% if current_lang == "en" %}Pending Requests{% else %}待审核队伍{% endif %}</h2>
+  <div class="stack">
+    {% for team in pending_teams %}
+      <div class="mini-card">
+        <strong>{{ team["name"] }}</strong>
+        <span>{% if current_lang == "en" %}Target Event{% else %}目标赛事{% endif %}: {{ team["target_event"] }}</span>
+        <span>{% if current_lang == "en" %}Captain{% else %}队长{% endif %}: @{{ team["captain_username"] }}{% if team["captain_name"] %} / {{ team["captain_name"] }}{% endif %}</span>
+        <p>{{ team["description"] }}</p>
+        <small>{% if current_lang == "en" %}Need{% else %}招募需求{% endif %}: {{ team["need_text"] }}</small>
+        <small>{% if current_lang == "en" %}Contact{% else %}联系方式{% endif %}: {{ team["contact"] }}</small>
+        <small>{% if current_lang == "en" %}Submitted At{% else %}提交时间{% endif %}: {{ team["created_at"] }}</small>
+        <div class="actions">
+          <form method="post" action="{{ url_for('web.admin_team_action', team_id=team['id'], action='approve') }}">
+            <input type="hidden" name="next" value="{{ url_for('web.admin_review') }}">
+            <button class="btn secondary" type="submit">{{ t("approve") }}</button>
+          </form>
+          <form method="post" action="{{ url_for('web.admin_team_action', team_id=team['id'], action='reject') }}">
+            <input type="hidden" name="next" value="{{ url_for('web.admin_review') }}">
+            <button class="btn ghost" type="submit">{{ t("reject") }}</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="mini-card">
+        <strong>{% if current_lang == "en" %}No pending teams{% else %}当前没有待审核队伍{% endif %}</strong>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

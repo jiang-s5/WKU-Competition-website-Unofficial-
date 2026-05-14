@@ -1,0 +1,632 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="site-video-bg">
+    <video id="heroScrollVideo" src="hero-video.mp4" autoplay muted playsinline preload="auto"></video>
+    <div class="site-video-overlay"></div>
+  </div>
+
+  <div class="page has-video-bg">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div id="brandTitle">温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a class="active" href="index.html" data-i18n="nav_home">首页</a>
+        <a href="browse.html" data-i18n="nav_browse">浏览赛事</a>
+        <a href="detail.html" data-i18n="nav_detail">赛事详情</a>
+        <a href="teams.html" data-i18n="nav_teams">寻找团队</a>
+        <a href="profile.html" data-i18n="nav_profile">个人主页</a>
+        <a href="feedback.html" data-i18n="nav_feedback">意见反馈</a>
+        <a href="forum.html" data-i18n="nav_forum">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div class="lang-switcher" id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="cinema-section">
+      <div class="cinema-stage">
+        <video class="cinema-video" id="heroStageVideo" src="hero-video.mp4" muted playsinline preload="auto"></video>
+        <div class="cinema-overlay">
+          <div class="cinema-copy">
+            <div class="cinema-kicker">WKU CS Innovation Platform</div>
+            <h1 id="heroVideoTitle">把比赛、组队和成长放进一个真正可上线的平台。</h1>
+            <p id="heroVideoSubtitle">这里集中展示热门赛事、团队招募、论坛交流和个人成长入口。登录后，首页认证区会自动隐藏，让界面更简洁。</p>
+            <div class="actions" style="margin-top: 24px;">
+              <a class="btn btn-primary" id="homeMainButton" href="browse.html">浏览赛事列表</a>
+              <a class="btn btn-secondary" href="teams.html" data-i18n="cta_teams">寻找团队</a>
+              <a class="btn btn-secondary" href="forum.html" data-i18n="cta_forum">进入论坛</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel section" id="quickAccessSection">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="quick_title">快速进入</h2>
+          <p class="muted" data-i18n="quick_desc">登录前在这里完成账号操作；登录成功后，这整块会自动收起。</p>
+        </div>
+      </div>
+
+      <div class="minimal-grid">
+        <article class="minimal-card">
+          <div class="eyebrow" data-i18n="auth_entry">个人访问入口</div>
+          <h3 style="margin-top: 14px;" data-i18n="auth_title">登录 / 注册</h3>
+          <p class="muted" data-i18n="auth_desc">使用个人账号进入平台，保存你的个人主页、团队状态与赛事浏览记录。</p>
+
+          <div class="mode-switch">
+            <button class="btn btn-primary" id="loginSwitch" type="button" data-i18n="login_tab">登录</button>
+            <button class="btn btn-secondary" id="registerSwitch" type="button" data-i18n="register_tab">注册</button>
+            <button class="btn btn-secondary" id="resetSwitch" type="button" data-i18n="reset_tab">找回密码</button>
+          </div>
+
+          <div class="form-grid" id="loginPanel" style="margin-top: 18px;">
+            <input class="input" id="loginUsername" type="text" placeholder="用户名">
+            <input class="input" id="loginPassword" type="password" placeholder="密码">
+            <label class="checkbox-row">
+              <input id="loginHumanCheck" type="checkbox">
+              <span data-i18n="human_check">我不是机器人，确认本人登录</span>
+            </label>
+            <button class="btn btn-primary" id="loginSubmit" type="button" data-i18n="login_tab">登录</button>
+            <div class="small-text" data-i18n="login_hint">登录成功后，首页将自动隐藏登录区，只保留主要内容。</div>
+          </div>
+
+          <div class="form-grid" id="registerPanel" style="margin-top: 18px; display: none;">
+            <input class="input" id="registerRealName" type="text" placeholder="真实姓名">
+            <input class="input" id="registerStudentId" type="text" placeholder="学生号">
+            <input class="input" id="registerUsername" type="text" placeholder="用户名">
+            <input class="input" id="registerPassword" type="password" placeholder="密码">
+            <input class="input" id="registerPasswordConfirm" type="password" placeholder="确认密码">
+            <input class="input" id="registerCaptcha" type="text" placeholder="请输入 8 + 3 的结果">
+            <button class="btn btn-accent" id="registerSubmit" type="button" data-i18n="register_tab">注册</button>
+          </div>
+
+          <div class="form-grid" id="resetPanel" style="margin-top: 18px; display: none;">
+            <input class="input" id="resetUsername" type="text" placeholder="用户名">
+            <input class="input" id="resetStudentId" type="text" placeholder="学生号">
+            <input class="input" id="resetPassword" type="password" placeholder="新密码">
+            <button class="btn btn-primary" id="resetSubmit" type="button" data-i18n="reset_tab">找回密码</button>
+          </div>
+        </article>
+
+        <article class="minimal-card">
+          <div class="eyebrow" data-i18n="platform_note_title">平台说明</div>
+          <h3 style="margin-top: 14px;" data-i18n="platform_note_heading">简洁，但功能完整</h3>
+          <p class="muted" data-i18n="platform_note_body">你可以浏览热门赛事、进入详情页查看通知和官网链接、寻找招募中的团队，或编辑个人主页展示你的科创经历与特长。</p>
+          <div class="note-box" style="margin-top: 18px;" data-i18n="platform_note_extra">
+            这是本地静态演示页，支持登录、注册、找回密码，以及登录后自动隐藏首页认证区。
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel section" id="popularSection">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="popular_title">近期热门赛事</h2>
+          <p class="muted" data-i18n="popular_desc">保留最清晰的赛事入口，让浏览和报名方向更聚焦。</p>
+        </div>
+        <a class="pill-link" href="browse.html" data-i18n="all_events">查看全部赛事</a>
+      </div>
+
+      <div class="minimal-grid">
+        <article class="minimal-card">
+          <div class="eyebrow" data-i18n="tag_security">AIGC</div>
+          <h3 data-i18n="card1_title">中国高校计算机大赛AIGC创新赛</h3>
+          <p class="muted" data-i18n="card1_desc">聚焦 AIGC 创新应用与实践展示，报名与赛程以官网公布为准。</p>
+          <div class="card-actions" style="margin-top: 16px;">
+            <a class="ghost-btn" href="detail.html?slug=aigc-innovation" data-i18n="view_detail">查看详情</a>
+            <a class="pill-link" href="teams.html" data-i18n="cta_teams">寻找团队</a>
+          </div>
+        </article>
+
+        <article class="minimal-card">
+          <div class="eyebrow" data-i18n="tag_modeling">人工智能应用</div>
+          <h3 data-i18n="card2_title">全国大学生数字应用大赛人工智能应用赛</h3>
+          <p class="muted" data-i18n="card2_desc">聚焦人工智能应用实践方向，具体赛道设置与时间请以官网公布为准。</p>
+          <div class="card-actions" style="margin-top: 16px;">
+            <a class="ghost-btn" href="detail.html?slug=digital-ai-application" data-i18n="view_detail">查看详情</a>
+            <a class="pill-link" href="teams.html" data-i18n="cta_teams">寻找团队</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer" id="footerText">温州肯恩大学AI社团竞赛平台</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    const pageTranslations = {
+      zh: {
+        brand: "温州肯恩大学AI社团竞赛平台",
+        nav_home: "首页",
+        nav_browse: "浏览赛事",
+        nav_detail: "赛事详情",
+        nav_teams: "寻找团队",
+        nav_profile: "个人主页",
+        nav_feedback: "意见反馈",
+        nav_forum: "论坛",
+        login_tab: "登录",
+        register_tab: "注册",
+        reset_tab: "找回密码",
+        quick_title: "快速进入",
+        quick_desc: "登录前在这里完成账号操作；登录成功后，这整块会自动收起。",
+        auth_entry: "个人访问入口",
+        auth_title: "登录 / 注册",
+        auth_desc: "使用个人账号进入平台，保存你的个人主页、团队状态与赛事浏览记录。",
+        human_check: "我不是机器人，确认本人登录",
+        login_hint: "登录成功后，首页将自动隐藏登录区，只保留主要内容。",
+        platform_note_title: "平台说明",
+        platform_note_heading: "简洁，但功能完整",
+        platform_note_body: "你可以浏览热门赛事、进入详情页查看通知和官网链接、寻找招募中的团队，或编辑个人主页展示你的科创经历与特长。",
+        platform_note_extra: "这是本地静态演示页，支持登录、注册、找回密码，以及登录后自动隐藏首页认证区。",
+        popular_title: "近期热门赛事",
+        popular_desc: "保留最清晰的赛事入口，让浏览和报名方向更聚焦。",
+        all_events: "查看全部赛事",
+        tag_security: "AIGC",
+        card1_title: "中国高校计算机大赛AIGC创新赛",
+        card1_desc: "聚焦 AIGC 创新应用与实践展示，报名与赛程以官网公布为准。",
+        tag_modeling: "人工智能应用",
+        card2_title: "全国大学生数字应用大赛人工智能应用赛",
+        card2_desc: "聚焦人工智能应用实践方向，具体赛道设置与时间请以官网公布为准。",
+        view_detail: "查看详情",
+        cta_teams: "寻找团队",
+        cta_forum: "进入论坛",
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录",
+        hero_title: "把比赛、组队和成长放进一个真正可上线的平台。",
+        hero_subtitle: "这里集中展示热门赛事、团队招募、论坛交流和个人成长入口。登录后，首页认证区会自动隐藏，让界面更简洁。",
+        hero_button: "浏览赛事列表",
+        placeholders: {
+          loginUsername: "用户名",
+          loginPassword: "密码",
+          registerRealName: "真实姓名",
+          registerStudentId: "学生号",
+          registerUsername: "用户名",
+          registerPassword: "密码",
+          registerPasswordConfirm: "确认密码",
+          registerCaptcha: "请输入 8 + 3 的结果",
+          resetUsername: "用户名",
+          resetStudentId: "学生号",
+          resetPassword: "新密码"
+        },
+        alerts: {
+          loginHuman: "请先勾选“我不是机器人，确认本人登录”。",
+          loginMissing: "请输入用户名和密码。",
+          loginUserMissing: "该用户名不存在。",
+          loginPasswordWrong: "密码错误。",
+          loginBanned: "当前账号已被封禁，无法登录。",
+          registerMissing: "请完整填写姓名、学号、用户名和密码。",
+          registerPasswordMismatch: "两次输入的密码不一致。",
+          registerCaptcha: "请输入正确的人机验证结果。",
+          registerUsernameExists: "该用户名已被注册。",
+          registerStudentExists: "该学号已存在。",
+          registerSuccess: "注册成功，已自动登录。",
+          resetMissing: "请完整填写用户名、学号和新密码。",
+          resetIdentityMismatch: "用户名和学号不匹配。",
+          resetSuccess: "密码已重置，请使用新密码登录。",
+          loggedOut: "你已退出登录。"
+        }
+      },
+      en: {
+        brand: "WKU AI Club Competition Platform",
+        nav_home: "Home",
+        nav_browse: "Events",
+        nav_detail: "Details",
+        nav_teams: "Teams",
+        nav_profile: "Profile",
+        nav_feedback: "Feedback",
+        nav_forum: "Forum",
+        login_tab: "Login",
+        register_tab: "Register",
+        reset_tab: "Reset Password",
+        quick_title: "Quick Access",
+        quick_desc: "Use this area before sign-in. After you log in, the whole block will disappear.",
+        auth_entry: "Account Access",
+        auth_title: "Login / Register",
+        auth_desc: "Use your account to save your profile, team status, and competition history.",
+        human_check: "I am not a robot and I confirm this login request",
+        login_hint: "After sign-in, this auth block will be hidden automatically.",
+        platform_note_title: "Platform Note",
+        platform_note_heading: "Minimal, but complete",
+        platform_note_body: "You can browse popular events, open detail pages, find recruiting teams, or edit your profile to show your innovation experience.",
+        platform_note_extra: "This local static demo supports login, registration, password reset, and auto-hiding the auth block after sign-in.",
+        popular_title: "Popular Competitions",
+        popular_desc: "Keep the clearest event entry points and make browsing more focused.",
+        all_events: "View All Events",
+        tag_security: "AIGC",
+        card1_title: "China Collegiate Computing Contest AIGC Innovation Competition",
+        card1_desc: "Focused on AIGC innovation practice and showcase. Please follow the official website for schedule and registration.",
+        tag_modeling: "AI Application",
+        card2_title: "National Student Digital Application Contest AI Application Track",
+        card2_desc: "Focused on applied AI practice. Please follow the official website for track settings and timelines.",
+        view_detail: "View Details",
+        cta_teams: "Find Teams",
+        cta_forum: "Open Forum",
+        signed_in: "Signed In",
+        signed_out: "Not Signed In",
+        logout: "Logout",
+        hero_title: "Put competitions, teams, and growth into one polished entry point.",
+        hero_subtitle: "This page brings together hot events, team recruiting, forum discussion, and personal growth. After sign-in, the auth block disappears for a cleaner interface.",
+        hero_button: "Browse Events",
+        placeholders: {
+          loginUsername: "Username",
+          loginPassword: "Password",
+          registerRealName: "Real Name",
+          registerStudentId: "Student ID",
+          registerUsername: "Username",
+          registerPassword: "Password",
+          registerPasswordConfirm: "Confirm Password",
+          registerCaptcha: "Enter the result of 8 + 3",
+          resetUsername: "Username",
+          resetStudentId: "Student ID",
+          resetPassword: "New Password"
+        },
+        alerts: {
+          loginHuman: "Please check the human verification box first.",
+          loginMissing: "Please enter both username and password.",
+          loginUserMissing: "This username does not exist.",
+          loginPasswordWrong: "Incorrect password.",
+          loginBanned: "This account has been banned.",
+          registerMissing: "Please complete real name, student ID, username, and password.",
+          registerPasswordMismatch: "The two passwords do not match.",
+          registerCaptcha: "Please enter the correct human-check result.",
+          registerUsernameExists: "This username is already registered.",
+          registerStudentExists: "This student ID already exists.",
+          registerSuccess: "Registration completed. You are now signed in.",
+          resetMissing: "Please complete username, student ID, and new password.",
+          resetIdentityMismatch: "Username and student ID do not match.",
+          resetSuccess: "Password reset completed. Please log in with the new password.",
+          loggedOut: "You have been logged out."
+        }
+      },
+      ja: {
+        brand: "WKU コンピュータサイエンス科創競賽プラットフォーム",
+        nav_home: "ホーム",
+        nav_browse: "大会一覧",
+        nav_detail: "詳細",
+        nav_teams: "チーム",
+        nav_profile: "プロフィール",
+        nav_feedback: "フィードバック",
+        nav_forum: "フォーラム",
+        login_tab: "ログイン",
+        register_tab: "登録",
+        reset_tab: "パスワード再設定",
+        quick_title: "クイックアクセス",
+        quick_desc: "ログイン前はここで認証を行い、ログイン後はこのブロックを自動で隠します。",
+        auth_entry: "アカウント入口",
+        auth_title: "ログイン / 登録",
+        auth_desc: "個人アカウントでログインすると、プロフィールやチーム状況、閲覧履歴を保存できます。",
+        human_check: "私はロボットではなく、本人ログインであることを確認します",
+        login_hint: "ログイン後、この認証ブロックは自動で非表示になります。",
+        platform_note_title: "プラットフォーム説明",
+        platform_note_heading: "シンプル、でも十分",
+        platform_note_body: "人気大会の閲覧、詳細ページ、募集中チームの検索、個人プロフィール編集ができます。",
+        platform_note_extra: "このローカル静的デモでは、ログイン、登録、パスワード再設定、ログイン後の認証ブロック自動非表示に対応しています。",
+        popular_title: "人気の大会",
+        popular_desc: "もっとも重要な大会入口だけを残し、閲覧体験をより明確にします。",
+        all_events: "すべて見る",
+        tag_security: "情報セキュリティ",
+        card1_title: "全国大学生情報安全競賽",
+        card1_desc: "セキュリティ、システム、スクリプトに興味のある学生向けの攻防実践型大会です。",
+        tag_modeling: "数学モデリング",
+        card2_title: "全国大学生数学モデリング競賽",
+        card2_desc: "アルゴリズム、モデリング、執筆、データ分析に向いた大会です。",
+        view_detail: "詳細を見る",
+        cta_teams: "チームを探す",
+        cta_forum: "フォーラムへ",
+        signed_in: "ログイン済み",
+        signed_out: "未ログイン",
+        logout: "ログアウト",
+        hero_title: "大会、チーム、成長を一つの洗練された入口へ。",
+        hero_subtitle: "人気大会、チーム募集、フォーラム交流、個人成長入口をまとめています。ログイン後は認証ブロックが消え、画面がよりすっきりします。",
+        hero_button: "大会一覧を見る",
+        placeholders: {
+          loginUsername: "ユーザー名",
+          loginPassword: "パスワード",
+          registerRealName: "氏名",
+          registerStudentId: "学籍番号",
+          registerUsername: "ユーザー名",
+          registerPassword: "パスワード",
+          registerPasswordConfirm: "確認用パスワード",
+          registerCaptcha: "8 + 3 の結果を入力",
+          resetUsername: "ユーザー名",
+          resetStudentId: "学籍番号",
+          resetPassword: "新しいパスワード"
+        },
+        alerts: {
+          loginHuman: "先に人機確認チェックを入れてください。",
+          loginMissing: "ユーザー名とパスワードを入力してください。",
+          loginUserMissing: "このユーザー名は存在しません。",
+          loginPasswordWrong: "パスワードが正しくありません。",
+          loginBanned: "このアカウントは停止されています。",
+          registerMissing: "氏名、学籍番号、ユーザー名、パスワードをすべて入力してください。",
+          registerPasswordMismatch: "2回入力したパスワードが一致しません。",
+          registerCaptcha: "人機確認の結果が正しくありません。",
+          registerUsernameExists: "このユーザー名はすでに使われています。",
+          registerStudentExists: "この学籍番号はすでに存在します。",
+          registerSuccess: "登録が完了し、そのままログインしました。",
+          resetMissing: "ユーザー名、学籍番号、新しいパスワードを入力してください。",
+          resetIdentityMismatch: "ユーザー名と学籍番号が一致しません。",
+          resetSuccess: "パスワードを再設定しました。新しいパスワードでログインしてください。",
+          loggedOut: "ログアウトしました。"
+        }
+      }
+    };
+
+    const authPanelIds = ["loginPanel", "registerPanel", "resetPanel"];
+    const authButtonIds = ["loginSwitch", "registerSwitch", "resetSwitch"];
+    let currentAuthMode = "login";
+
+    function currentLang() {
+      return localStorage.getItem("site-lang") || "zh";
+    }
+
+    function t(key) {
+      const lang = currentLang();
+      return (pageTranslations[lang] && pageTranslations[lang][key]) || pageTranslations.zh[key] || key;
+    }
+
+    function tAlert(key) {
+      const lang = currentLang();
+      return pageTranslations[lang].alerts[key] || pageTranslations.zh.alerts[key] || key;
+    }
+
+    function updatePlaceholders() {
+      const placeholders = pageTranslations[currentLang()].placeholders || pageTranslations.zh.placeholders;
+      Object.entries(placeholders).forEach(([id, value]) => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.placeholder = value;
+        }
+      });
+    }
+
+    function setLang(lang) {
+      localStorage.setItem("site-lang", lang);
+      renderLanguage();
+    }
+
+    function renderLangButtons() {
+      const lang = currentLang();
+      const switcher = document.getElementById("langSwitcher");
+      switcher.innerHTML = ["zh", "en", "ja"].map((item) =>
+        `<button type="button" class="${item === lang ? "active" : ""}" onclick="setLang('${item}')">${item.toUpperCase()}</button>`
+      ).join("");
+    }
+
+    function renderLanguage() {
+      const lang = currentLang();
+      document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
+      document.title = `${t("nav_home")} - ${t("brand")}`;
+      document.getElementById("brandTitle").textContent = t("brand");
+      document.getElementById("footerText").textContent = t("brand");
+      document.getElementById("heroVideoTitle").textContent = localStorage.getItem("wku-home-title") || t("hero_title");
+      document.getElementById("heroVideoSubtitle").textContent = localStorage.getItem("wku-home-intro") || t("hero_subtitle");
+      document.getElementById("homeMainButton").textContent = localStorage.getItem("wku-home-button") || t("hero_button");
+
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        node.textContent = t(node.dataset.i18n);
+      });
+
+      updatePlaceholders();
+      renderLangButtons();
+      renderStatus();
+      switchAuthMode(currentAuthMode);
+    }
+
+    function switchAuthMode(mode) {
+      currentAuthMode = mode;
+      authPanelIds.forEach((id) => {
+        document.getElementById(id).style.display = id === `${mode}Panel` ? "grid" : "none";
+      });
+      authButtonIds.forEach((id) => {
+        const active = id === `${mode}Switch`;
+        document.getElementById(id).className = active ? "btn btn-primary" : "btn btn-secondary";
+      });
+    }
+
+    function renderAuthVisibility() {
+      const quickSection = document.getElementById("quickAccessSection");
+      quickSection.style.display = PlatformData.getCurrentUser() ? "none" : "block";
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "头";
+    }
+
+    function statusAvatarMarkup(user) {
+      if (user && user.avatar) {
+        return `<span class="status-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></span>`;
+      }
+      return `<span class="status-avatar"><span class="status-avatar-fallback">${initials(user && (user.name || user.username))}</span></span>`;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${t("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${t("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${t("signed_out")}</span>`;
+      }
+      renderAuthVisibility();
+    }
+
+    function users() {
+      return PlatformData.getUsers();
+    }
+
+    function login() {
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const humanCheck = document.getElementById("loginHumanCheck").checked;
+
+      if (!humanCheck) {
+        alert(tAlert("loginHuman"));
+        return;
+      }
+      if (!username || !password) {
+        alert(tAlert("loginMissing"));
+        return;
+      }
+
+      const user = users().find((item) => item.username === username);
+      if (!user) {
+        alert(tAlert("loginUserMissing"));
+        return;
+      }
+      if (user.status === "banned") {
+        alert(tAlert("loginBanned"));
+        return;
+      }
+      if (user.password !== password) {
+        alert(tAlert("loginPasswordWrong"));
+        return;
+      }
+
+      const result = PlatformData.loginAuthUser(username, password);
+      if (!result.ok) {
+        alert(tAlert("loginPasswordWrong"));
+        return;
+      }
+
+      document.getElementById("loginPassword").value = "";
+      renderStatus();
+    }
+
+    function registerUser() {
+      const payload = {
+        name: document.getElementById("registerRealName").value.trim(),
+        studentId: document.getElementById("registerStudentId").value.trim(),
+        username: document.getElementById("registerUsername").value.trim(),
+        password: document.getElementById("registerPassword").value,
+        confirmPassword: document.getElementById("registerPasswordConfirm").value
+      };
+      const captcha = document.getElementById("registerCaptcha").value.trim();
+
+      if (!payload.name || !payload.studentId || !payload.username || !payload.password) {
+        alert(tAlert("registerMissing"));
+        return;
+      }
+      if (payload.password !== payload.confirmPassword) {
+        alert(tAlert("registerPasswordMismatch"));
+        return;
+      }
+      if (captcha !== "11") {
+        alert(tAlert("registerCaptcha"));
+        return;
+      }
+
+      const list = users();
+      if (list.some((item) => item.username === payload.username)) {
+        alert(tAlert("registerUsernameExists"));
+        return;
+      }
+      if (list.some((item) => item.studentId === payload.studentId)) {
+        alert(tAlert("registerStudentExists"));
+        return;
+      }
+
+      const result = PlatformData.registerAuthUser(payload);
+      if (!result.ok) {
+        alert(result.message || tAlert("registerMissing"));
+        return;
+      }
+
+      alert(tAlert("registerSuccess"));
+      renderStatus();
+    }
+
+    function resetPassword() {
+      const payload = {
+        username: document.getElementById("resetUsername").value.trim(),
+        studentId: document.getElementById("resetStudentId").value.trim(),
+        newPassword: document.getElementById("resetPassword").value
+      };
+
+      if (!payload.username || !payload.studentId || !payload.newPassword) {
+        alert(tAlert("resetMissing"));
+        return;
+      }
+
+      const user = users().find((item) =>
+        item.username === payload.username &&
+        item.studentId === payload.studentId
+      );
+      if (!user) {
+        alert(tAlert("resetIdentityMismatch"));
+        return;
+      }
+
+      const result = PlatformData.resetPasswordByIdentity(payload);
+      if (!result.ok) {
+        alert(result.message || tAlert("resetIdentityMismatch"));
+        return;
+      }
+
+      alert(tAlert("resetSuccess"));
+      document.getElementById("loginUsername").value = payload.username;
+      switchAuthMode("login");
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      switchAuthMode("login");
+      renderStatus();
+    }
+
+    function initButtons() {
+      document.getElementById("loginSwitch").addEventListener("click", () => switchAuthMode("login"));
+      document.getElementById("registerSwitch").addEventListener("click", () => switchAuthMode("register"));
+      document.getElementById("resetSwitch").addEventListener("click", () => switchAuthMode("reset"));
+      document.getElementById("loginSubmit").addEventListener("click", login);
+      document.getElementById("registerSubmit").addEventListener("click", registerUser);
+      document.getElementById("resetSubmit").addEventListener("click", resetPassword);
+    }
+
+    function initVideo() {
+      const heroConfig = PlatformData.getHeroVideoConfig();
+      const heroVideo = document.getElementById("heroScrollVideo");
+      const heroStageVideo = document.getElementById("heroStageVideo");
+      const src = heroConfig.src || "hero-video.mp4";
+      heroVideo.src = src;
+      heroStageVideo.src = src;
+      heroVideo.play().catch(() => {});
+      heroStageVideo.play().catch(() => {});
+    }
+
+    (function init() {
+      initButtons();
+      initVideo();
+      renderLanguage();
+    })();
+  </script>
+</body>
+</html>
+

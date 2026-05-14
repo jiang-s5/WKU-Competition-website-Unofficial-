@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel section">
+  <span class="eyebrow">{{ t("nav_competitions") }}</span>
+  <h1>{{ t("nav_competitions") }}</h1>
+  <div class="list">
+    {% for competition in competitions %}
+      <a class="list-card" href="{{ url_for('web.competition_detail', slug=competition['slug']) }}">
+        <strong>{{ competition["title"] }}</strong>
+        <span>{{ competition["category"] }}</span>
+        <p>{{ competition["summary"] }}</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

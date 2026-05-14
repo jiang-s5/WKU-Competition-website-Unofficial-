@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>招募审核 - 管理员后台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-badge">审</div>
+        <div>团队招募审核后台</div>
+      </div>
+      <a class="admin-chip" href="admin-home.html">返回总览</a>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-menu-link" href="admin-home.html">管理总览</a>
+        <a class="admin-menu-link active" href="admin-review.html">招募审核</a>
+        <a class="admin-menu-link" href="admin-feedback.html">意见反馈</a>
+        <a class="admin-menu-link" href="admin-forum.html">论坛管理</a>
+        <a class="admin-menu-link" href="admin-users.html">用户管理</a>
+      </aside>
+
+      <main class="admin-main-panel">
+        <h1>前台团队招募审核</h1>
+        <p class="admin-subtitle">这里会显示学生在前台创建的新团队招募。审核通过后，该团队会自动显示在前台团队页。</p>
+        <div class="admin-list" id="reviewList" style="margin-top:22px;"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    function renderRequests() {
+      const requests = PlatformData.getTeamRequests();
+      document.getElementById("reviewList").innerHTML = requests.length ? requests.map((item) => `
+        <article class="admin-card">
+          <h3>${item.teamName}</h3>
+          <p class="admin-meta">提交人：${item.applicant || "未知用户"}</p>
+          <p class="admin-meta">目标赛事：${item.targetEvent}</p>
+          <p class="admin-meta">招募方向：${item.teamNeed}</p>
+          <p class="admin-text">${item.teamDesc}</p>
+          <div class="admin-actions">
+            <span class="admin-status ${item.status === "approved" ? "live" : item.status === "rejected" ? "draft" : "draft"}">${item.status}</span>
+            <button class="admin-btn primary" type="button" onclick="updateStatus(${item.id}, 'approved')">审核通过</button>
+            <button class="admin-btn secondary" type="button" onclick="updateStatus(${item.id}, 'rejected')">驳回</button>
+            <button class="admin-btn green" type="button" onclick="updateStatus(${item.id}, 'pending')">改回待审</button>
+          </div>
+        </article>
+      `).join("") : '<div class="admin-card"><h3>暂无招募审核数据</h3><p class="admin-text">当前还没有学生提交新的团队招募申请。</p></div>';
+    }
+
+    function updateStatus(id, status) {
+      const requests = PlatformData.getTeamRequests();
+      const target = requests.find((item) => item.id === id);
+      if (!target) return;
+      target.status = status;
+      localStorage.setItem("wku-team-requests", JSON.stringify(requests));
+      renderRequests();
+    }
+
+    renderRequests();
+  </script>
+</body>
+</html>

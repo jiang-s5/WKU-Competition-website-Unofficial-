@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build With AI 温州站活动海报</title>
+  <style>
+    :root {
+      --bg: #eaf0f7;
+      --panel: rgba(255, 255, 255, 0.9);
+      --cyan: #35d9d2;
+      --cyan-deep: #18a7c5;
+      --green: #8ef04f;
+      --green-deep: #42cf6d;
+      --ink: #0f3145;
+      --muted: #5e6f7e;
+      --shadow: 0 20px 40px rgba(46, 139, 160, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 12%, rgba(110, 255, 186, 0.35), transparent 20%),
+        radial-gradient(circle at 88% 18%, rgba(68, 214, 255, 0.25), transparent 22%),
+        linear-gradient(180deg, #f5f8fd 0%, #dceaf2 52%, #d5eaf0 100%);
+      font-family: "HarmonyOS Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--ink);
+      padding: 24px 12px 40px;
+    }
+
+    .poster {
+      width: min(100%, 390px);
+      margin: 0 auto;
+      border-radius: 28px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.78));
+      box-shadow: 0 28px 60px rgba(20, 63, 101, 0.15);
+      position: relative;
+      backdrop-filter: blur(6px);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 28px 24px 150px;
+      min-height: 560px;
+      background:
+        radial-gradient(circle at 76% 24%, rgba(102, 231, 255, 0.6), transparent 18%),
+        radial-gradient(circle at 85% 56%, rgba(117, 255, 170, 0.3), transparent 12%),
+        radial-gradient(circle at 18% 75%, rgba(65, 245, 183, 0.28), transparent 18%),
+        linear-gradient(180deg, #f8fbff 0%, #dff2fb 58%, #8ee8de 100%);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      border-radius: 999px;
+      filter: blur(0.2px);
+    }
+
+    .hero::before {
+      width: 170px;
+      height: 170px;
+      right: -40px;
+      top: 80px;
+      background: radial-gradient(circle, rgba(96, 240, 255, 0.45), rgba(96, 240, 255, 0));
+    }
+
+    .hero::after {
+      width: 220px;
+      height: 220px;
+      left: -88px;
+      bottom: 60px;
+      background: radial-gradient(circle, rgba(100, 255, 154, 0.38), rgba(100, 255, 154, 0));
+    }
+
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 180deg, #00c8ff, #76f570, #ffb64c, #00c8ff);
+      position: relative;
+      box-shadow: 0 10px 22px rgba(0, 163, 199, 0.2);
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .brand-text {
+      font-size: 12px;
+      line-height: 1.25;
+      color: #284150;
+      font-weight: 700;
+    }
+
+    .brand-text small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .organizers {
+      max-width: 162px;
+      font-size: 10px;
+      line-height: 1.45;
+      color: #294759;
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      align-items: start;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 55px;
+      line-height: 0.94;
+      letter-spacing: -2px;
+      font-weight: 900;
+      color: transparent;
+      background: linear-gradient(180deg, #9dfb56 0%, #1dd3c1 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 6px 14px rgba(42, 173, 163, 0.16);
+    }
+
+    .subtitle-chip {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f6ff6d 0%, #98f15f 100%);
+      color: #17384d;
+      font-size: 16px;
+      font-weight: 900;
+      box-shadow: 0 14px 24px rgba(154, 234, 89, 0.25);
+    }
+
+    .hero-copy {
+      margin-top: 18px;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #294759;
+      max-width: 208px;
+    }
+
+    .ai-cube {
+      width: 118px;
+      height: 118px;
+      margin-top: 6px;
+      justify-self: end;
+      position: relative;
+      border-radius: 28px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(202, 241, 255, 0.95));
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.9),
+        0 20px 38px rgba(64, 152, 206, 0.18);
+      transform: perspective(600px) rotateX(8deg) rotateY(-12deg);
+    }
+
+    .ai-cube::before {
+      content: "AI";
+      position: absolute;
+      inset: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      font-size: 52px;
+      font-weight: 900;
+      color: transparent;
+      background: linear-gradient(180deg, #8de8ff 0%, #77d2ff 48%, #7cf45e 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 8px 18px rgba(83, 201, 255, 0.26);
+    }
+
+    .ai-cube::after {
+      content: "";
+      position: absolute;
+      width: 74px;
+      height: 20px;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(40, 190, 255, 0.45), rgba(40, 190, 255, 0));
+    }
+
+    .meta {
+      margin-top: 26px;
+      display: grid;
+      gap: 18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .meta-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #17384d;
+    }
+
+    .meta-item span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.65;
+      color: #294759;
+    }
+
+    .skyline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 170px;
+      background:
+        linear-gradient(180deg, rgba(47, 192, 203, 0), rgba(17, 167, 174, 0.25)),
+        linear-gradient(90deg,
+          rgba(26, 124, 162, 0.55) 0 5%,
+          transparent 5% 9%,
+          rgba(17, 118, 157, 0.4) 9% 14%,
+          transparent 14% 20%,
+          rgba(45, 135, 173, 0.55) 20% 26%,
+          transparent 26% 34%,
+          rgba(18, 122, 169, 0.48) 34% 38%,
+          transparent 38% 41%,
+          rgba(26, 130, 184, 0.62) 41% 52%,
+          transparent 52% 58%,
+          rgba(28, 126, 174, 0.58) 58% 68%,
+          transparent 68% 74%,
+          rgba(26, 124, 162, 0.54) 74% 84%,
+          transparent 84% 90%,
+          rgba(22, 110, 150, 0.46) 90% 100%);
+      clip-path: polygon(
+        0 100%, 0 58%, 4% 58%, 4% 48%, 9% 48%, 9% 68%, 12% 68%, 12% 58%, 19% 58%, 19% 42%, 24% 42%, 24% 64%,
+        29% 64%, 29% 53%, 34% 53%, 34% 68%, 39% 68%, 39% 39%, 44% 39%, 44% 59%, 48% 59%, 48% 24%, 51% 12%,
+        54% 24%, 54% 67%, 61% 67%, 61% 47%, 67% 47%, 67% 63%, 73% 63%, 73% 41%, 78% 41%, 78% 72%, 83% 72%,
+        83% 53%, 89% 53%, 89% 65%, 94% 65%, 94% 48%, 100% 48%, 100% 100%);
+      opacity: 0.92;
+    }
+
+    .skyline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 58px;
+      background: linear-gradient(180deg, rgba(74, 230, 193, 0), rgba(74, 230, 193, 0.78));
+    }
+
+    .section {
+      padding: 24px 18px 8px;
+      background: linear-gradient(180deg, rgba(238, 244, 250, 0.96), rgba(233, 240, 246, 0.96));
+    }
+
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin: 0 0 14px;
+      color: #163749;
+    }
+
+    .section-title .arrow {
+      font-size: 18px;
+      color: var(--green);
+      font-weight: 900;
+      transform: translateY(-2px);
+    }
+
+    .section-title .index {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 900;
+      color: transparent;
+      background: linear-gradient(180deg, #b8ff55 0%, #26d8ca 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .section-title .label {
+      font-size: 25px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.6px;
+    }
+
+    .section-title small {
+      margin-left: auto;
+      align-self: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(184, 255, 85, 0.22), rgba(38, 216, 202, 0.22));
+      font-size: 11px;
+      color: #33525f;
+      font-weight: 800;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: 92px 94px 1fr;
+      gap: 0;
+      background: linear-gradient(90deg, #f7ff70 0%, #32d7b3 100%);
+      color: #153849;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .card-head > div {
+      padding: 12px 14px;
+      border-right: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .card-head > div:last-child {
+      border-right: 0;
+    }
+
+    .rows {
+      position: relative;
+      padding: 4px 0;
+    }
+
+    .rows::before {
+      content: "";
+      position: absolute;
+      left: 108px;
+      top: 14px;
+      bottom: 14px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(74, 207, 130, 0.5), rgba(74, 207, 130, 0.1));
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 92px 94px 1fr;
+      gap: 0;
+      min-height: 86px;
+      position: relative;
+    }
+
+    .row + .row {
+      border-top: 1px solid rgba(17, 81, 110, 0.08);
+    }
+
+    .cell {
+      padding: 14px 14px 14px 16px;
+      font-size: 11px;
+      line-height: 1.58;
+      color: #234354;
+    }
+
+    .cell strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+      color: #17384d;
+    }
+
+    .session {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .session::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 18px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #dbff7b 0%, #48d78d 100%);
+      box-shadow: 0 0 0 4px rgba(82, 217, 143, 0.15);
+      z-index: 1;
+    }
+
+    .highlights ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .highlights li + li {
+      margin-top: 5px;
+    }
+
+    .highlights li::before {
+      content: "•";
+      color: #2ed380;
+      font-weight: 900;
+      margin-right: 6px;
+    }
+
+    .pill-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 4px 18px 20px;
+    }
+
+    .pill {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(184,255,85,0.25), rgba(38,216,202,0.24));
+      color: #204251;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid rgba(59, 216, 174, 0.18);
+    }
+
+    .info-card {
+      padding: 18px;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .info-item {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(244, 251, 255, 0.9), rgba(233, 248, 246, 0.88));
+      border: 1px solid rgba(86, 203, 201, 0.12);
+    }
+
+    .info-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #17384d;
+    }
+
+    .info-item span {
+      font-size: 12px;
+      line-height: 1.65;
+      color: #31505f;
+    }
+
+    .footer {
+      padding: 22px 20px 34px;
+      position: relative;
+      text-align: center;
+      background:
+        linear-gradient(180deg, rgba(233, 240, 246, 0.96), rgba(184, 239, 231, 0.94) 58%, rgba(173, 233, 225, 0.98) 100%);
+      overflow: hidden;
+    }
+
+    .footer::before,
+    .footer::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      width: 120px;
+      height: 90px;
+      background:
+        linear-gradient(180deg, rgba(22, 119, 153, 0), rgba(22, 119, 153, 0.35)),
+        linear-gradient(90deg,
+          rgba(32, 130, 166, 0.2) 0 10%,
+          transparent 10% 15%,
+          rgba(32, 130, 166, 0.25) 15% 25%,
+          transparent 25% 30%,
+          rgba(32, 130, 166, 0.18) 30% 44%,
+          transparent 44% 52%,
+          rgba(32, 130, 166, 0.22) 52% 68%,
+          transparent 68% 74%,
+          rgba(32, 130, 166, 0.16) 74% 100%);
+      opacity: 0.55;
+      clip-path: polygon(
+        0 100%, 0 70%, 12% 70%, 12% 56%, 23% 56%, 23% 67%, 35% 67%, 35% 34%, 48% 34%, 48% 60%, 60% 60%, 60% 45%, 72% 45%, 72% 78%, 84% 78%, 84% 54%, 100% 54%, 100% 100%
+      );
+    }
+
+    .footer::before {
+      left: -10px;
+    }
+
+    .footer::after {
+      right: -10px;
+      transform: scaleX(-1);
+    }
+
+    .footer strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.8px;
+      color: transparent;
+      background: linear-gradient(180deg, #67d4ff 0%, #5dd59d 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      text-shadow: 0 6px 16px rgba(82, 197, 211, 0.18);
+      margin-bottom: 6px;
+    }
+
+    .footer span {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(50, 115, 136, 0.6);
+      letter-spacing: 0.6px;
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 0;
+      }
+
+      .poster {
+        width: 100%;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <section class="hero">
+      <div class="brand-row">
+        <div class="brand-lockup">
+          <div class="brand-mark"></div>
+          <div class="brand-text">
+            Build With AI
+            <small>Wenzhou Edition</small>
+          </div>
+        </div>
+        <div class="organizers">
+          Google Developer Groups Wenzhou<br />
+          Datawhale<br />
+          温州市软件行业协会人工智能专业委员会
+        </div>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <h1 class="title">Build<br />With AI</h1>
+          <div class="subtitle-chip">2026 年活动预热海报</div>
+          <div class="hero-copy">
+            “这次我们不讲 AI，我们 Build With AI。”<br />
+            从理解、实操到产出，完整走一遍 AI 应用落地过程。
+          </div>
+        </div>
+        <div class="ai-cube"></div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-item">
+          <strong>时间 Time</strong>
+          <span>2026.04.26</span>
+        </div>
+        <div class="meta-item">
+          <strong>地点 Location</strong>
+          <span>GHK 中庭</span>
+        </div>
+        <div class="meta-item">
+          <strong>面向 Audience</strong>
+          <span>全校及社会所有对 AI 感兴趣的人</span>
+        </div>
+      </div>
+
+      <div class="skyline"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">
+        <span class="arrow">▶▶</span>
+        <span class="index">PART 1</span>
+        <span class="label">内容与实操</span>
+        <small>Agenda Highlights</small>
+      </h2>
+
+      <div class="card">
+        <div class="card-head">
+          <div>模块 Module</div>
+          <div>环节 Session</div>
+          <div>内容亮点 Highlights</div>
+        </div>
+        <div class="rows">
+          <div class="row">
+            <div class="cell">
+              <strong>开场</strong>
+              Welcome
+            </div>
+            <div class="cell session">
+              <strong>Build With AI</strong>
+              活动导入
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>打破“只听不做”的活动惯性</li>
+                <li>让每位参与者带着成果离开现场</li>
+                <li>面向所有对 AI 感兴趣的人开放</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="cell">
+              <strong>前沿</strong>
+              Frontier
+            </div>
+            <div class="cell session">
+              <strong>Harness Engineering</strong>
+              深度分享
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>从工程视角拆解 AI 系统如何真正被构建出来</li>
+                <li>看懂能力、架构、流程与实际落地之间的关系</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="cell">
+              <strong>研究</strong>
+              Research
+            </div>
+            <div class="cell session">
+              <strong>Claude Code</strong>
+              实战演示
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>从文献综述到研究洞察，完整跑通一套工作流</li>
+                <li>把 AI 变成学习和科研的高效助手</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="cell">
+              <strong>系统</strong>
+              Systems
+            </div>
+            <div class="cell session">
+              <strong>Gemma4 × 多设备智能体</strong>
+              互动展示
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>手机与大模型协同工作</li>
+                <li>让 AI 从“工具”升级为“系统”</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="cell">
+              <strong>应用</strong>
+              Practice
+            </div>
+            <div class="cell session">
+              <strong>Fine Tuning + OpenClaw</strong>
+              现场搭建
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>Fine Tuning Gemma：让模型适配你的数据和场景</li>
+                <li>OpenClaw 部署实操：完成一个真正可运行的 AI 应用</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">
+        <span class="arrow">▶▶</span>
+        <span class="index">PART 2</span>
+        <span class="label">现场体验</span>
+        <small>Immersion &amp; Connection</small>
+      </h2>
+
+      <div class="card">
+        <div class="card-head">
+          <div>区域 Area</div>
+          <div>形式 Format</div>
+          <div>你能收获 What You Get</div>
+        </div>
+        <div class="rows">
+          <div class="row">
+            <div class="cell">
+              <strong>体验区</strong>
+              Interactive Zone
+            </div>
+            <div class="cell session">
+              <strong>技术体验</strong>
+              AI 互动区
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>近距离接触 AI 工具与应用场景</li>
+                <li>边看边试，理解不再停留在概念层面</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="cell">
+              <strong>交流区</strong>
+              Connect
+            </div>
+            <div class="cell session">
+              <strong>开发者面对面</strong>
+              自由交流
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>和讲者、开发者、同学直接交流</li>
+                <li>找到合作、灵感和下一步实践方向</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="cell">
+              <strong>氛围区</strong>
+              Event Mood
+            </div>
+            <div class="cell session">
+              <strong>打卡墙 + 茶歇</strong>
+              Social Time
+            </div>
+            <div class="cell highlights">
+              <ul>
+                <li>联名打卡墙记录你的 Build With AI 现场时刻</li>
+                <li>不是听完就走，而是真正有氛围的技术现场</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pill-cloud">
+        <div class="pill">不止是计算机专业</div>
+        <div class="pill">讲座 + Workshop + 实操产出</div>
+        <div class="pill">每个人都能做出点东西</div>
+        <div class="pill">连接全球开发者生态</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">
+        <span class="arrow">▶▶</span>
+        <span class="index">INFO</span>
+        <span class="label">活动信息</span>
+        <small>Event Basics</small>
+      </h2>
+
+      <div class="card info-card">
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>联合发起</strong>
+            <span>
+              Google Developer Groups Wenzhou（谷歌开发者社区温州站）<br />
+              Datawhale<br />
+              温州市软件行业协会人工智能专业委员会<br />
+              温州肯恩理工学院计算机科学与技术系<br />
+              温州肯恩大学 AI 社团
+            </span>
+          </div>
+          <div class="info-item">
+            <strong>为什么来</strong>
+            <span>不是无聊没用的传统讲座，而是一步步带你搭建 AI 应用，让“学过”真正变成“做过”。</span>
+          </div>
+          <div class="info-item">
+            <strong>一句话总结</strong>
+            <span>这不是一场讲座，这是你第一次真正开始 Build With AI。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>从理解 到实操 到产出</strong>
+      <span>THIS IS NOT JUST A TALK. THIS IS YOUR FIRST BUILD WITH AI.</span>
+    </footer>
+  </main>
+</body>
+</html>

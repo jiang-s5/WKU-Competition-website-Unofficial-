@@ -1,0 +1,21 @@
+<section class="panel section">
+  <span class="eyebrow">{{ t("nav_admin") }}</span>
+  <h1>{{ admin_title }}</h1>
+  <p>{{ admin_intro }}</p>
+  <div class="stats-grid">
+    <div class="stat-card"><strong>{{ stats["users"] }}</strong><span>{% if current_lang == "en" %}Users{% else %}用户{% endif %}</span></div>
+    <div class="stat-card"><strong>{{ stats["teams"] }}</strong><span>{% if current_lang == "en" %}Teams{% else %}队伍{% endif %}</span></div>
+    <div class="stat-card"><strong>{{ stats["posts"] }}</strong><span>{% if current_lang == "en" %}Posts{% else %}帖子{% endif %}</span></div>
+    <div class="stat-card"><strong>{{ stats["feedback"] }}</strong><span>{% if current_lang == "en" %}Feedback{% else %}反馈{% endif %}</span></div>
+  </div>
+</section>
+
+<section class="panel section admin-nav-panel">
+  <nav class="admin-tabs">
+    <a href="{{ url_for('web.admin') }}" class="{% if active_admin == 'overview' %}active{% endif %}">{% if current_lang == "en" %}Overview{% else %}管理总览{% endif %}</a>
+    <a href="{{ url_for('web.admin_review') }}" class="{% if active_admin == 'review' %}active{% endif %}">{% if current_lang == "en" %}Team Review{% else %}团队审核{% endif %}</a>
+    <a href="{{ url_for('web.admin_feedback') }}" class="{% if active_admin == 'feedback' %}active{% endif %}">{% if current_lang == "en" %}Feedback{% else %}意见反馈{% endif %}</a>
+    <a href="{{ url_for('web.admin_forum') }}" class="{% if active_admin == 'forum' %}active{% endif %}">{% if current_lang == "en" %}Forum{% else %}论坛管理{% endif %}</a>
+    <a href="{{ url_for('web.admin_users') }}" class="{% if active_admin == 'users' %}active{% endif %}">{% if current_lang == "en" %}Users{% else %}用户管理{% endif %}</a>
+  </nav>
+</section>

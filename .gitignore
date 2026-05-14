@@ -141,3 +141,20 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Python / Flask
+*.pyc
+__pycache__/
+.venv/
+venv/
+instance/
+backend/instance/
+*.db
+
+# Local deploy artifacts
+*.zip
+_deploy_stage_backend/
+
+# Local OS/editor
+.DS_Store
+Thumbs.db

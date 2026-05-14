@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="{{ current_lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site_setting("site_name", t("site_name")) }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+  <div class="video-shell">
+    <video class="page-video" autoplay muted loop playsinline>
+      <source src="{{ url_for('static', filename='assets/hero-video.mp4') }}" type="video/mp4">
+    </video>
+    <div class="page-mask"></div>
+  </div>
+
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="{{ url_for('web.home') }}">{{ site_setting("site_name", t("site_name")) }}</a>
+      <nav class="nav">
+        <a href="{{ url_for('web.home') }}">{{ t("nav_home") }}</a>
+        <a href="{{ url_for('web.competitions') }}">{{ t("nav_competitions") }}</a>
+        <a href="{{ url_for('web.teams') }}">{{ t("nav_teams") }}</a>
+        <a href="{{ url_for('web.forum') }}">{{ t("nav_forum") }}</a>
+        <a href="{{ url_for('web.feedback') }}">{{ t("nav_feedback") }}</a>
+        <a href="{{ url_for('web.profile') }}">{{ t("nav_profile") }}</a>
+        {% if current_user and current_user["role"] == "admin" %}
+          <a href="{{ url_for('web.admin') }}">{{ t("nav_admin") }}</a>
+        {% endif %}
+      </nav>
+      <div class="top-actions">
+        <div class="lang-switcher">
+          {% for lang in supported_langs %}
+            <a href="{{ request.path }}?lang={{ lang }}" class="{% if current_lang == lang %}active{% endif %}">{{ lang.upper() }}</a>
+          {% endfor %}
+        </div>
+        {% if current_user %}
+          <details class="status-menu">
+            <summary class="status-chip">
+              <span>{% if current_lang == "en" %}Signed In{% else %}已登录{% endif %}</span>
+              <span class="status-arrow">▾</span>
+            </summary>
+            <div class="status-dropdown">
+              <form method="post" action="{{ url_for('web.logout') }}">
+                <button type="submit" class="status-action">{{ t("logout") }}</button>
+              </form>
+            </div>
+          </details>
+        {% else %}
+          <span class="status-chip muted-status">
+            {% if current_lang == "en" %}Not Signed In{% else %}未登录{% endif %}
+          </span>
+        {% endif %}
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <section class="flash-stack">
+          {% for message in messages %}
+            <div class="flash">{{ message }}</div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

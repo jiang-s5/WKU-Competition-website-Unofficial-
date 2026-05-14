@@ -1,0 +1,487 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人主页 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div id="brandTitle">温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html" data-i18n="nav_home">首页</a>
+        <a href="browse.html" data-i18n="nav_browse">浏览赛事</a>
+        <a href="detail.html" data-i18n="nav_detail">赛事详情</a>
+        <a href="teams.html" data-i18n="nav_teams">寻找团队</a>
+        <a class="active" href="profile.html" data-i18n="nav_profile">个人主页</a>
+        <a href="feedback.html" data-i18n="nav_feedback">意见反馈</a>
+        <a href="forum.html" data-i18n="nav_forum">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div class="lang-switcher" id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="panel section" id="profileSection">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="page_title">个人主页</h2>
+          <p class="muted" data-i18n="page_desc">展示你的科创经历、技术特长与参赛意向，也可以在这里上传你的个人头像。</p>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="card">
+          <div class="eyebrow" data-i18n="info_card">个人信息</div>
+
+          <div class="profile-avatar-editor">
+            <div class="profile-avatar-shell" id="avatarPreview">头</div>
+            <div class="profile-avatar-tools">
+              <strong id="avatarTitle" data-i18n="avatar_title">个人头像</strong>
+              <p class="muted" id="avatarDesc" data-i18n="avatar_desc">支持上传 JPG、PNG、WEBP 等图片，头像会保存在当前浏览器中。</p>
+              <div class="card-actions">
+                <label class="btn btn-secondary profile-upload-btn" for="avatarInput" data-i18n="avatar_upload">上传头像</label>
+                <button class="btn btn-secondary" type="button" id="removeAvatarButton" data-i18n="avatar_remove">移除头像</button>
+              </div>
+              <input id="avatarInput" class="profile-hidden-input" type="file" accept="image/*">
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 20px;">
+            <input class="input" id="profileName" type="text" placeholder="昵称 / 真实姓名">
+            <textarea class="textarea" id="profileBio" rows="5" placeholder="科创经历 / 获奖经历"></textarea>
+            <textarea class="textarea" id="profileSkills" rows="5" placeholder="技术特长 / 参赛意向"></textarea>
+            <button class="btn btn-primary" type="button" id="saveProfileButton" data-i18n="save_profile">保存修改</button>
+          </div>
+        </div>
+
+        <div class="stack">
+          <article class="card">
+            <div class="eyebrow" data-i18n="overview_card">个人概览</div>
+            <div class="profile-overview" style="margin-top: 18px;">
+              <div class="profile-overview-head">
+                <div class="profile-avatar-shell small" id="overviewAvatar">头</div>
+                <div>
+                  <h3 id="overviewName">计算机学院同学</h3>
+                  <p class="meta" id="overviewUsername">@student</p>
+                </div>
+              </div>
+              <div class="profile-overview-list">
+                <p class="meta"><strong data-i18n="student_id_label">学生号</strong><span id="overviewStudentId">-</span></p>
+                <p class="meta"><strong data-i18n="phone_label">手机号</strong><span id="overviewPhone">-</span></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow" data-i18n="stats_card">参与情况</div>
+            <div class="profile-stats">
+              <div class="stat-card"><strong id="joinedTeamsCount">0</strong><span data-i18n="joined_teams">已加入团队</span></div>
+              <div class="stat-card"><strong id="forumPostsCount">0</strong><span data-i18n="forum_posts">我的帖子</span></div>
+              <div class="stat-card"><strong id="avatarState">0</strong><span data-i18n="avatar_state">头像状态</span></div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="eyebrow" data-i18n="my_teams_card">我加入的队伍</div>
+            <div id="myTeamsList" style="margin-top: 14px;"></div>
+            <div class="card-actions" style="margin-top: 14px;">
+              <a class="pill-link" href="teams.html" data-i18n="go_teams">查看团队页</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer" data-i18n="footer_note">个人主页内容会保存在当前浏览器中作为演示。</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    const profileTexts = {
+      zh: {
+        nav_home: "首页",
+        nav_browse: "浏览赛事",
+        nav_detail: "赛事详情",
+        nav_teams: "寻找团队",
+        nav_profile: "个人主页",
+        nav_feedback: "意见反馈",
+        nav_forum: "论坛",
+        page_title: "个人主页",
+        page_desc: "展示你的科创经历、技术特长与参赛意向，也可以在这里上传你的个人头像。",
+        info_card: "个人信息",
+        avatar_title: "个人头像",
+        avatar_desc: "支持上传 JPG、PNG、WEBP 等图片，头像会保存在当前浏览器中。",
+        avatar_upload: "上传头像",
+        avatar_remove: "移除头像",
+        save_profile: "保存修改",
+        overview_card: "个人概览",
+        stats_card: "参与情况",
+        my_teams_card: "我加入的队伍",
+        student_id_label: "学生号",
+        phone_label: "手机号",
+        joined_teams: "已加入团队",
+        forum_posts: "我的帖子",
+        avatar_state: "头像状态",
+        go_teams: "查看团队页",
+        footer_note: "个人主页内容会保存在当前浏览器中作为演示。",
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录",
+        avatar_ready: "已上传",
+        avatar_empty: "未上传",
+        no_teams: "你当前还没有加入任何队伍。",
+        locked_desc: "个人主页需要先登录或注册后才可访问。",
+        locked_title: "请先登录或注册",
+        locked_body: "登录后才可以编辑头像、个人经历、技术特长、参赛意向和查看你加入的队伍。",
+        locked_login: "前往登录 / 注册",
+        locked_teams: "先浏览团队",
+        placeholders: {
+          profileName: "昵称 / 真实姓名",
+          profileBio: "科创经历 / 获奖经历",
+          profileSkills: "技术特长 / 参赛意向"
+        },
+        alerts: {
+          saved: "个人主页信息已保存。",
+          removed: "头像已移除。",
+          need_image: "请选择图片文件。",
+          too_large: "图片请控制在 1.5MB 以内，避免浏览器本地存储过大。",
+          read_failed: "头像读取失败，请换一张图片重试。"
+        }
+      },
+      en: {
+        nav_home: "Home",
+        nav_browse: "Events",
+        nav_detail: "Details",
+        nav_teams: "Teams",
+        nav_profile: "Profile",
+        nav_feedback: "Feedback",
+        nav_forum: "Forum",
+        page_title: "Profile",
+        page_desc: "Show your competition experience, skills, goals, and upload a personal avatar here.",
+        info_card: "Profile Info",
+        avatar_title: "Avatar",
+        avatar_desc: "Upload JPG, PNG, or WEBP images. The avatar is stored in this browser for demo purposes.",
+        avatar_upload: "Upload Avatar",
+        avatar_remove: "Remove Avatar",
+        save_profile: "Save Changes",
+        overview_card: "Overview",
+        stats_card: "Participation",
+        my_teams_card: "My Teams",
+        student_id_label: "Student ID",
+        phone_label: "Phone",
+        joined_teams: "Joined Teams",
+        forum_posts: "My Posts",
+        avatar_state: "Avatar Status",
+        go_teams: "Open Teams Page",
+        footer_note: "Profile content is stored in the current browser for demo purposes.",
+        signed_in: "Signed In",
+        signed_out: "Not Signed In",
+        logout: "Logout",
+        avatar_ready: "Uploaded",
+        avatar_empty: "Empty",
+        no_teams: "You have not joined any teams yet.",
+        locked_desc: "You need to log in or register before accessing your profile.",
+        locked_title: "Please log in or register first",
+        locked_body: "After signing in, you can edit your avatar, experience, skills, and joined teams here.",
+        locked_login: "Go to Login / Register",
+        locked_teams: "Browse Teams First",
+        placeholders: {
+          profileName: "Display Name / Real Name",
+          profileBio: "Experience / Awards",
+          profileSkills: "Skills / Competition Intent"
+        },
+        alerts: {
+          saved: "Profile information has been saved.",
+          removed: "Avatar removed.",
+          need_image: "Please choose an image file.",
+          too_large: "Please keep the image under 1.5MB to avoid heavy local storage usage.",
+          read_failed: "Failed to read the image. Please try another file."
+        }
+      },
+      ja: {
+        nav_home: "ホーム",
+        nav_browse: "大会一覧",
+        nav_detail: "詳細",
+        nav_teams: "チーム",
+        nav_profile: "プロフィール",
+        nav_feedback: "フィードバック",
+        nav_forum: "フォーラム",
+        page_title: "プロフィール",
+        page_desc: "科創経験、技術特長、参加意向を整理し、個人アバターもここでアップロードできます。",
+        info_card: "個人情報",
+        avatar_title: "個人アバター",
+        avatar_desc: "JPG、PNG、WEBP 画像に対応しています。アバターはこのブラウザに保存されます。",
+        avatar_upload: "画像を選ぶ",
+        avatar_remove: "削除",
+        save_profile: "保存",
+        overview_card: "概要",
+        stats_card: "参加状況",
+        my_teams_card: "参加中のチーム",
+        student_id_label: "学籍番号",
+        phone_label: "電話番号",
+        joined_teams: "参加チーム",
+        forum_posts: "自分の投稿",
+        avatar_state: "アバター状態",
+        go_teams: "チームページへ",
+        footer_note: "プロフィール内容はデモとして現在のブラウザに保存されます。",
+        signed_in: "ログイン済み",
+        signed_out: "未ログイン",
+        logout: "ログアウト",
+        avatar_ready: "設定済み",
+        avatar_empty: "未設定",
+        no_teams: "現在参加しているチームはありません。",
+        locked_desc: "プロフィールを使うには先にログインまたは登録が必要です。",
+        locked_title: "先にログインまたは登録してください",
+        locked_body: "ログイン後、アバター、経歴、特長、参加チームをここで管理できます。",
+        locked_login: "ログイン / 登録へ",
+        locked_teams: "先にチームを見る",
+        placeholders: {
+          profileName: "表示名 / 氏名",
+          profileBio: "科創経験 / 受賞歴",
+          profileSkills: "技術特長 / 参加意向"
+        },
+        alerts: {
+          saved: "プロフィール情報を保存しました。",
+          removed: "アバターを削除しました。",
+          need_image: "画像ファイルを選択してください。",
+          too_large: "ローカル保存が重くなりすぎないよう、画像は 1.5MB 以内にしてください。",
+          read_failed: "画像の読み込みに失敗しました。別の画像を試してください。"
+        }
+      }
+    };
+
+    let pendingAvatar = null;
+
+    function currentLang() {
+      return localStorage.getItem("site-lang") || "zh";
+    }
+
+    function t(key) {
+      const lang = currentLang();
+      return (profileTexts[lang] && profileTexts[lang][key]) || profileTexts.zh[key] || key;
+    }
+
+    function statusText() {
+      return PlatformData.getCurrentUser() ? t("signed_in") : t("signed_out");
+    }
+
+    function renderLangButtons() {
+      const lang = currentLang();
+      const switcher = document.getElementById("langSwitcher");
+      switcher.innerHTML = ["zh", "en", "ja"].map((item) =>
+        `<button type="button" class="${item === lang ? "active" : ""}" onclick="setLang('${item}')">${item.toUpperCase()}</button>`
+      ).join("");
+    }
+
+    function setLang(lang) {
+      localStorage.setItem("site-lang", lang);
+      renderPage();
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "头";
+    }
+
+    function avatarMarkup(user, className) {
+      if (user && user.avatar) {
+        return `<img src="${user.avatar}" alt="avatar" class="${className} avatar-image">`;
+      }
+      return `<span class="${className} avatar-fallback">${initials(user && user.name)}</span>`;
+    }
+
+    function statusAvatarMarkup(user) {
+      return `<span class="status-avatar">${avatarMarkup(user, "")}</span>`;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${t("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${t("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${t("signed_out")}</span>`;
+      }
+    }
+
+    function renderLocked() {
+      const section = document.getElementById("profileSection");
+      section.innerHTML = `
+        <div class="section-head">
+          <div>
+            <h2>${t("page_title")}</h2>
+            <p class="muted">${t("locked_desc")}</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">${t("nav_profile")}</div>
+          <h3 style="margin-top:14px;">${t("locked_title")}</h3>
+          <p class="muted">${t("locked_body")}</p>
+          <div class="card-actions" style="margin-top:16px;">
+            <a class="btn btn-primary" href="index.html">${t("locked_login")}</a>
+            <a class="btn btn-secondary" href="teams.html">${t("locked_teams")}</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAvatarPreview(user) {
+      const preview = document.getElementById("avatarPreview");
+      const overview = document.getElementById("overviewAvatar");
+      if (!preview || !overview) {
+        return;
+      }
+      if (pendingAvatar !== null) {
+        const avatar = pendingAvatar;
+        preview.innerHTML = avatar ? `<img src="${avatar}" alt="avatar" class="avatar-image">` : `<span class="avatar-fallback">${initials(user && user.name)}</span>`;
+      } else {
+        preview.innerHTML = avatarMarkup(user, "");
+      }
+      overview.innerHTML = avatarMarkup(user, "");
+    }
+
+    function renderTeams(user) {
+      const list = document.getElementById("myTeamsList");
+      if (!list) {
+        return;
+      }
+      const myTeams = PlatformData.getTeams().filter((team) => (team.members || []).includes(user.name));
+      document.getElementById("joinedTeamsCount").textContent = String(myTeams.length);
+      list.innerHTML = myTeams.length
+        ? myTeams.map((team) => `<p class="meta">${team.name} | ${team.captain === user.name ? "队长" : "队员"}</p>`).join("")
+        : `<p class="meta">${t("no_teams")}</p>`;
+    }
+
+    function renderOverview(user) {
+      document.getElementById("overviewName").textContent = user.name || "计算机学院同学";
+      document.getElementById("overviewUsername").textContent = `@${user.username || "student"}`;
+      document.getElementById("overviewStudentId").textContent = user.studentId || "-";
+      document.getElementById("overviewPhone").textContent = user.phone || "-";
+      document.getElementById("forumPostsCount").textContent = String(PlatformData.getUserForumPosts(user.name).length);
+      document.getElementById("avatarState").textContent = user.avatar ? t("avatar_ready") : t("avatar_empty");
+      renderTeams(user);
+      renderAvatarPreview(user);
+    }
+
+    function bindProfile() {
+      const user = PlatformData.getCurrentUser();
+      if (!user) {
+        localStorage.setItem("wku-platform-return", "profile.html");
+        renderLocked();
+        return;
+      }
+      pendingAvatar = null;
+      document.getElementById("profileName").value = user.name || "";
+      document.getElementById("profileBio").value = user.bio || "";
+      document.getElementById("profileSkills").value = user.skills || "";
+      renderOverview(user);
+    }
+
+    function saveProfile() {
+      const payload = {
+        name: document.getElementById("profileName").value.trim(),
+        bio: document.getElementById("profileBio").value,
+        skills: document.getElementById("profileSkills").value
+      };
+      if (pendingAvatar !== null) {
+        payload.avatar = pendingAvatar;
+      }
+      const result = PlatformData.updateCurrentUserProfile(payload);
+      if (!result.ok) {
+        return;
+      }
+      pendingAvatar = null;
+      renderStatus();
+      renderOverview(result.user);
+      alert(profileTexts[currentLang()].alerts.saved);
+    }
+
+    function removeAvatar() {
+      pendingAvatar = "";
+      renderAvatarPreview(PlatformData.getCurrentUser());
+      document.getElementById("avatarState").textContent = t("avatar_empty");
+      alert(profileTexts[currentLang()].alerts.removed);
+    }
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        return;
+      }
+      if (!file.type.startsWith("image/")) {
+        alert(profileTexts[currentLang()].alerts.need_image);
+        return;
+      }
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert(profileTexts[currentLang()].alerts.too_large);
+        event.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function () {
+        pendingAvatar = reader.result;
+        renderAvatarPreview(PlatformData.getCurrentUser());
+        document.getElementById("avatarState").textContent = t("avatar_ready");
+      };
+      reader.onerror = function () {
+        alert(profileTexts[currentLang()].alerts.read_failed);
+      };
+      reader.readAsDataURL(file);
+      event.target.value = "";
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      location.href = "index.html";
+    }
+
+    function applyText() {
+      document.title = `${t("page_title")} - ${profileTexts[currentLang()].nav_profile}`;
+      document.getElementById("brandTitle").textContent = profileTexts[currentLang()].brand || "温州肯恩大学AI社团竞赛平台";
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        node.textContent = t(node.dataset.i18n);
+      });
+      const placeholders = profileTexts[currentLang()].placeholders;
+      Object.entries(placeholders).forEach(([id, value]) => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.placeholder = value;
+        }
+      });
+    }
+
+    function renderPage() {
+      renderLangButtons();
+      applyText();
+      renderStatus();
+      bindProfile();
+    }
+
+    (function init() {
+      document.getElementById("saveProfileButton").addEventListener("click", saveProfile);
+      document.getElementById("removeAvatarButton").addEventListener("click", removeAvatar);
+      document.getElementById("avatarInput").addEventListener("change", handleAvatarUpload);
+      renderPage();
+    })();
+  </script>
+</body>
+</html>
+

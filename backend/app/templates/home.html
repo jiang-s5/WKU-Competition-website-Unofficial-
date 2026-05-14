@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero panel">
+  <div class="hero-copy">
+    <span class="eyebrow">{{ site_setting("hero_eyebrow", "WKU CS Innovation Platform") }}</span>
+    <h1>{{ site_setting("hero_title", t("hero_title")) }}</h1>
+    <p>{{ site_setting("hero_subtitle", t("hero_subtitle")) }}</p>
+    <div class="actions">
+      <a class="btn primary" href="{{ url_for('web.competitions') }}">{{ t("cta_competitions") }}</a>
+      <a class="btn secondary" href="{{ url_for('web.teams') }}">{{ t("cta_teams") }}</a>
+      <a class="btn secondary" href="{{ url_for('web.forum') }}">{{ t("cta_forum") }}</a>
+    </div>
+  </div>
+</section>
+
+{% if current_user %}
+  <section class="section">
+    <article class="panel">
+      <span class="eyebrow">{{ t("popular_competitions") }}</span>
+      <div class="list">
+        {% for competition in competitions %}
+          <a class="list-card" href="{{ url_for('web.competition_detail', slug=competition['slug']) }}">
+            <strong>{{ competition["title"] }}</strong>
+            <span>{{ competition["category"] }}</span>
+            <p>{{ competition["summary"] }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+{% else %}
+  <section class="grid-two section">
+    <article class="panel">
+      <span class="eyebrow">{{ t("auth_center") }}</span>
+      <div class="auth-tabs">
+        <a class="auth-tab {% if active_auth == 'login' %}active{% endif %}" href="{{ url_for('web.home', auth='login') }}">{{ t("login") }}</a>
+        <a class="auth-tab {% if active_auth == 'register' %}active{% endif %}" href="{{ url_for('web.home', auth='register') }}">{{ t("register") }}</a>
+        <a class="auth-tab {% if active_auth == 'reset' %}active{% endif %}" href="{{ url_for('web.home', auth='reset') }}">{{ t("reset_password") }}</a>
+      </div>
+
+      <div class="auth-grid">
+        {% if active_auth == "login" %}
+          <form method="post" action="{{ url_for('web.login') }}" class="stack auth-form-card">
+            <input name="username" placeholder="{{ t('username') }}" required>
+            <input name="password" type="password" placeholder="{{ t('password') }}" required>
+            <button class="btn primary" type="submit">{{ t("login") }}</button>
+          </form>
+        {% elif active_auth == "register" %}
+          <form method="post" action="{{ url_for('web.register') }}" class="stack auth-form-card">
+            <input name="real_name" placeholder="{{ t('real_name') }}" required>
+            <input name="student_id" placeholder="{{ t('student_id') }}" required>
+            <input name="username" placeholder="{{ t('username') }}" required>
+            <input name="password" type="password" placeholder="{{ t('password') }}" required>
+            <input name="confirm_password" type="password" placeholder="{{ 'Confirm Password' if current_lang == 'en' else '确认密码' }}" required>
+            <input name="captcha" placeholder="7 + 4 = ?" required>
+            <button class="btn primary" type="submit">{{ t("register") }}</button>
+          </form>
+        {% else %}
+          <form method="post" action="{{ url_for('web.reset_password') }}" class="stack auth-form-card">
+            <input name="username" placeholder="{{ t('username') }}" required>
+            <input name="student_id" placeholder="{{ t('student_id') }}" required>
+            <input name="new_password" type="password" placeholder="{{ t('new_password') }}" required>
+            <button class="btn primary" type="submit">{{ t("reset_password") }}</button>
+          </form>
+        {% endif %}
+      </div>
+    </article>
+
+    <article class="panel">
+      <span class="eyebrow">{{ t("popular_competitions") }}</span>
+      <div class="list">
+        {% for competition in competitions %}
+          <a class="list-card" href="{{ url_for('web.competition_detail', slug=competition['slug']) }}">
+            <strong>{{ competition["title"] }}</strong>
+            <span>{{ competition["category"] }}</span>
+            <p>{{ competition["summary"] }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+{% endif %}
+{% endblock %}

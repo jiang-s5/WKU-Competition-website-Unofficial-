@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+{% set admin_title = "用户管理" if current_lang != "en" else "User Management" %}
+{% set admin_intro = "这里汇总所有注册用户，方便管理员进行封号、解封、禁言和解除禁言。" if current_lang != "en" else "Review registered users here and manage bans and mutes." %}
+{% include "_admin_nav.html" %}
+
+<section class="panel section">
+  <h2>{% if current_lang == "en" %}Registered Users{% else %}注册用户列表{% endif %}</h2>
+  <div class="stack">
+    {% for user in users %}
+      <div class="mini-card">
+        <strong>@{{ user["username"] }}{% if user["real_name"] %} / {{ user["real_name"] }}{% endif %}</strong>
+        <span>{{ user["student_id"] }}</span>
+        <small>{% if current_lang == "en" %}Role{% else %}角色{% endif %}: {{ user["role"] }} | {% if current_lang == "en" %}Status{% else %}状态{% endif %}: {{ user["status"] }} | {% if current_lang == "en" %}Muted{% else %}禁言{% endif %}: {{ "Yes" if user["muted"] else "No" }}</small>
+        <small>{% if current_lang == "en" %}Created At{% else %}注册时间{% endif %}: {{ user["created_at"] }}</small>
+        <div class="actions">
+          {% if user["id"] != current_user["id"] %}
+            {% if user["status"] == "active" %}
+              <form method="post" action="{{ url_for('web.admin_user_action', user_id=user['id'], action='ban') }}">
+                <input type="hidden" name="next" value="{{ url_for('web.admin_users') }}">
+                <button class="btn ghost" type="submit">{% if current_lang == "en" %}Ban{% else %}封号{% endif %}</button>
+              </form>
+            {% else %}
+              <form method="post" action="{{ url_for('web.admin_user_action', user_id=user['id'], action='unban') }}">
+                <input type="hidden" name="next" value="{{ url_for('web.admin_users') }}">
+                <button class="btn secondary" type="submit">{% if current_lang == "en" %}Unban{% else %}解封{% endif %}</button>
+              </form>
+            {% endif %}
+            {% if user["muted"] %}
+              <form method="post" action="{{ url_for('web.admin_user_action', user_id=user['id'], action='unmute') }}">
+                <input type="hidden" name="next" value="{{ url_for('web.admin_users') }}">
+                <button class="btn secondary" type="submit">{% if current_lang == "en" %}Unmute{% else %}解除禁言{% endif %}</button>
+              </form>
+            {% else %}
+              <form method="post" action="{{ url_for('web.admin_user_action', user_id=user['id'], action='mute') }}">
+                <input type="hidden" name="next" value="{{ url_for('web.admin_users') }}">
+                <button class="btn ghost" type="submit">{% if current_lang == "en" %}Mute{% else %}禁言{% endif %}</button>
+              </form>
+            {% endif %}
+          {% else %}
+            <span class="eyebrow">{% if current_lang == "en" %}Current Admin{% else %}当前管理员{% endif %}</span>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="mini-card">
+        <strong>{% if current_lang == "en" %}No users found{% else %}暂无用户{% endif %}</strong>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

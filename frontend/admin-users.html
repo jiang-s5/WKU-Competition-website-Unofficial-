@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户管理 - 管理员后台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-badge">人</div>
+        <div>注册用户管理后台</div>
+      </div>
+      <a class="admin-chip" href="admin-home.html">返回总览</a>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-menu-link" href="admin-home.html">管理总览</a>
+        <a class="admin-menu-link" href="admin-review.html">招募审核</a>
+        <a class="admin-menu-link" href="admin-feedback.html">意见反馈</a>
+        <a class="admin-menu-link" href="admin-forum.html">论坛管理</a>
+        <a class="admin-menu-link active" href="admin-users.html">用户管理</a>
+      </aside>
+
+      <main class="admin-main-panel">
+        <h1>全部注册人员信息汇总</h1>
+        <p class="admin-subtitle">管理员可以在这里查看已注册用户，并执行封号和禁言操作。</p>
+        <div class="admin-list" id="userList" style="margin-top:22px;"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    function renderUsers() {
+      const users = PlatformData.getUsers();
+      document.getElementById("userList").innerHTML = users.length ? users.map((user) => `
+        <div class="admin-row">
+          <div>
+            <strong>${user.name}</strong>
+            <div class="admin-meta">用户名：${user.username || "-"}</div>
+            <div class="admin-meta">学号：${user.studentId || "-"}</div>
+            <div class="admin-meta">手机号：${user.phone || "-"}</div>
+          </div>
+          <div>
+            <div class="admin-meta">角色：${user.role || "student"}</div>
+            <div class="admin-meta">注册时间：${user.registerTime || "-"}</div>
+            <div class="admin-meta">最近登录：${user.lastLogin || "-"}</div>
+          </div>
+          <div>
+            <span class="admin-status ${user.status === "banned" ? "draft" : "live"}">${user.status || "normal"}</span>
+            <span class="admin-status ${user.muted ? "draft" : "live"}" style="margin-left:8px;">${user.muted ? "muted" : "normal"}</span>
+          </div>
+          <div class="admin-actions">
+            <button class="admin-btn primary" type="button" onclick="toggleBan('${user.name}')">${user.status === "banned" ? "解封" : "封号"}</button>
+            <button class="admin-btn secondary" type="button" onclick="toggleMute('${user.name}')">${user.muted ? "取消禁言" : "禁言"}</button>
+          </div>
+        </div>
+      `).join("") : '<div class="admin-card"><h3>暂无注册用户</h3><p class="admin-text">当前还没有用户完成登录或注册。</p></div>';
+    }
+
+    function toggleBan(name) {
+      const users = PlatformData.getUsers();
+      const target = users.find((user) => user.name === name);
+      if (!target) return;
+      target.status = target.status === "banned" ? "normal" : "banned";
+      PlatformData.saveUsers(users);
+      renderUsers();
+    }
+
+    function toggleMute(name) {
+      const users = PlatformData.getUsers();
+      const target = users.find((user) => user.name === name);
+      if (!target) return;
+      target.muted = !target.muted;
+      PlatformData.saveUsers(users);
+      renderUsers();
+    }
+
+    renderUsers();
+  </script>
+</body>
+</html>

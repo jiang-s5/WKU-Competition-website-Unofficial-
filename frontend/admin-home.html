@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理员入口 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-badge">管</div>
+        <div>温州肯恩大学AI社团竞赛平台管理员后台</div>
+      </div>
+      <div class="admin-chip">独立后台模式</div>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-menu-link active" href="admin-home.html">管理总览</a>
+        <a class="admin-menu-link" href="admin-review.html">招募审核</a>
+        <a class="admin-menu-link" href="admin-feedback.html">意见反馈</a>
+        <a class="admin-menu-link" href="admin-forum.html">论坛管理</a>
+        <a class="admin-menu-link" href="admin-users.html">用户管理</a>
+        <a class="admin-menu-link" href="admin-media.html">视频素材</a>
+        <div class="admin-note">
+          后台现在独立于前台站点运行。你可以在这里审核团队招募、查看前台反馈、管理论坛帖子，并集中处理用户封号与禁言。
+        </div>
+      </aside>
+
+      <main class="admin-main-panel">
+        <h1>管理员后台总入口</h1>
+        <p class="admin-subtitle">这里不再混在前台站点中，而是独立的一组后台页面。左侧每个模块都会跳转到各自单独的管理页。</p>
+
+        <section class="admin-grid-4" style="margin-top:24px;">
+          <article class="admin-card admin-metric"><strong id="metricTeam">0</strong><span>待审核招募</span></article>
+          <article class="admin-card admin-metric"><strong id="metricFeedback">0</strong><span>新反馈</span></article>
+          <article class="admin-card admin-metric"><strong id="metricForum">0</strong><span>论坛帖子</span></article>
+          <article class="admin-card admin-metric"><strong id="metricUsers">0</strong><span>注册用户</span></article>
+        </section>
+
+        <section class="admin-grid-2" style="margin-top:20px;">
+          <article class="admin-card">
+            <h2>后台模块说明</h2>
+            <p class="admin-text">`招募审核` 用于审核前台提交的新团队招募，审核通过后会展示在前台招募列表中。</p>
+            <p class="admin-text">`意见反馈` 用于查看学生提交的建议、页面问题和新增赛事需求。</p>
+            <p class="admin-text">`论坛管理` 用于查看和隐藏前台论坛帖子，便于维护讨论秩序。</p>
+            <p class="admin-text">`用户管理` 用于查看注册用户信息，并执行封号与禁言操作。</p>
+          </article>
+          <article class="admin-card">
+            <h2>快捷跳转</h2>
+            <div class="admin-actions">
+              <a class="admin-btn primary" href="admin-review.html">进入招募审核</a>
+              <a class="admin-btn secondary" href="admin-feedback.html">进入意见反馈</a>
+              <a class="admin-btn secondary" href="admin-forum.html">进入论坛管理</a>
+              <a class="admin-btn green" href="admin-users.html">进入用户管理</a>
+              <a class="admin-btn secondary" href="admin-media.html">进入视频素材</a>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div class="admin-footer">独立管理员后台入口页</div>
+  </div>
+  <script src="platform-data.js"></script>
+  <script>
+    document.getElementById("metricTeam").textContent = PlatformData.getTeamRequests().filter((item) => item.status === "pending").length;
+    document.getElementById("metricFeedback").textContent = PlatformData.getFeedbacks().filter((item) => item.status === "new").length;
+    document.getElementById("metricForum").textContent = PlatformData.getForumPosts().length;
+    document.getElementById("metricUsers").textContent = PlatformData.getUsers().length;
+  </script>
+</body>
+</html>
+

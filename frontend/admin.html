@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=admin-home.html">
+  <title>后台管理 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">管</div>
+        <div>温州肯恩大学AI社团竞赛平台后台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a href="browse.html">浏览赛事</a>
+        <a href="detail.html">赛事详情</a>
+        <a href="teams.html">寻找团队</a>
+        <a href="profile.html">个人主页</a>
+        <a class="active" href="admin.html">后台管理</a>
+      </nav>
+      <div class="user-chip" id="userChip">管理员模式</div>
+    </header>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>后台管理台</h2>
+          <p class="muted">你可以在这里维护平台首页文案、编辑赛事信息、填写真实官网链接，并控制赛事的发布状态。</p>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-primary" type="button" onclick="publishSelected()">发布选中赛事</button>
+          <button class="btn btn-secondary" type="button" onclick="saveHomepage()">保存首页文案</button>
+        </div>
+      </div>
+
+      <div class="admin-shell">
+        <aside class="admin-menu">
+          <button class="ghost-btn" type="button" onclick="focusBlock('dashboard')">管理总览</button>
+          <button class="ghost-btn" type="button" onclick="focusBlock('eventManage')">赛事管理</button>
+          <button class="ghost-btn" type="button" onclick="focusBlock('publisher')">官网发布</button>
+          <button class="ghost-btn" type="button" onclick="focusBlock('pageEdit')">页面编辑</button>
+          <button class="ghost-btn" type="button" onclick="focusBlock('noticeBlock')">公告与审核</button>
+          <div class="table-note" style="margin-top:16px;">
+            管理员可将赛事先保存为草稿，再补充学院通知链接、竞赛官网和发布时间，确认无误后再正式发布到前台。
+          </div>
+        </aside>
+
+        <div class="admin-content">
+          <section class="card" id="dashboard">
+            <div class="section-head">
+              <div>
+                <h3>管理总览</h3>
+                <p class="muted">快速查看当前站点运行状态和待处理任务。</p>
+              </div>
+            </div>
+            <div class="metric-grid">
+              <div class="metric-card"><strong>4</strong><span>已收录赛事</span></div>
+              <div class="metric-card"><strong>12</strong><span>待审核草稿</span></div>
+              <div class="metric-card"><strong>16</strong><span>活跃招募队伍</span></div>
+              <div class="metric-card"><strong>4</strong><span>真实官网链接</span></div>
+            </div>
+          </section>
+
+          <section class="card" id="eventManage">
+            <div class="section-head">
+              <div>
+                <h3>赛事管理</h3>
+                <p class="muted">编辑赛事名称、类别、时间、地点、级别、简介和发布状态。</p>
+              </div>
+            </div>
+            <div class="admin-list" id="eventRows"></div>
+          </section>
+
+          <section class="card" id="publisher">
+            <div class="section-head">
+              <div>
+                <h3>官网发布与链接维护</h3>
+                <p class="muted">在这里填写学院官网通知和竞赛官方网站，确保前台详情页可直接访问真实来源。</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <input class="input" id="publishTitle" type="text" value="中国高校计算机大赛AIGC创新赛">
+              <input class="input" id="collegeLink" type="text" placeholder="学院官网通知链接">
+              <input class="input" id="officialLink" type="text" placeholder="竞赛官方网站链接">
+              <input class="input" id="publishTime" type="text" placeholder="发布时间，例如 2026-04-09 14:30">
+              <textarea class="textarea" id="publishMemo" rows="5" placeholder="补充发布说明、审核备注或下线原因"></textarea>
+              <div class="toolbar">
+                <button class="btn btn-primary" type="button" onclick="savePublishForm()">保存发布信息</button>
+                <button class="btn btn-accent" type="button" onclick="markLive()">设为已发布</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" id="pageEdit">
+            <div class="section-head">
+              <div>
+                <h3>网页内容编辑</h3>
+                <p class="muted">维护首页标题、平台介绍和按钮文案，方便你随时调整站点呈现。</p>
+              </div>
+            </div>
+            <div class="form-grid">
+              <input class="input" id="homeTitle" type="text" value="找比赛、组团队、做认证，把科创路径放在一个入口里。">
+              <textarea class="textarea" id="homeIntro" rows="5">使用个人账号登录或注册后，即可访问温州肯恩大学AI社团竞赛平台。首页集中展示近期热门赛事，你也可以进入浏览赛事列表查看全部项目。</textarea>
+              <input class="input" id="homeButtonText" type="text" value="浏览赛事列表">
+              <button class="btn btn-secondary" type="button" onclick="saveHomepage()">保存首页文案</button>
+            </div>
+          </section>
+
+          <section class="card" id="noticeBlock">
+            <div class="section-head">
+              <div>
+                <h3>公告与审核记录</h3>
+                <p class="muted">记录赛事发布、官网更新、页面调整和审核意见，便于后台管理留痕。</p>
+              </div>
+            </div>
+            <div class="admin-list">
+              <div class="admin-row">
+                <div>新增“中国高校计算机大赛AIGC创新赛”真实官网链接</div>
+                <div>2026-04-09 13:40</div>
+                <div><span class="badge draft">待审核</span></div>
+                <button class="ghost-btn" type="button">查看记录</button>
+              </div>
+              <div class="admin-row">
+                <div>同步“全国大学生人工智能+创新创业大赛”官网地址</div>
+                <div>2026-04-09 12:10</div>
+                <div><span class="badge live">已发布</span></div>
+                <button class="ghost-btn" type="button">查看记录</button>
+              </div>
+              <div class="admin-row">
+                <div>首页平台简介文案调整</div>
+                <div>2026-04-08 18:22</div>
+                <div><span class="badge live">已生效</span></div>
+                <button class="ghost-btn" type="button">查看记录</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">后台管理页为原型版，当前用浏览器本地存储模拟管理员操作</div>
+  </div>
+
+  <script>
+    const adminEvents = [
+      { title: "中国高校计算机大赛AIGC创新赛", level: "国家级", status: "live", statusText: "已发布", time: "时间以官网公布为准", official: "https://aigc.vivo.com.cn/#/home" },
+      { title: "全国大学生数字技能应用大赛计算机技能应用赛", level: "国家级", status: "live", statusText: "已发布", time: "时间以官网公布为准", official: "https://www.cnccac.com/" },
+      { title: "全国大学生数字应用大赛人工智能应用赛", level: "国家级", status: "live", statusText: "已发布", time: "时间以官网公布为准", official: "https://www.cnccac.com/rgzn" },
+      { title: "全国大学生人工智能+创新创业大赛", level: "国家级", status: "live", statusText: "已发布", time: "时间以官网公布为准", official: "http://rgzn.52jingsai.com" }
+    ];
+
+    function renderRows() {
+      const container = document.getElementById("eventRows");
+      container.innerHTML = adminEvents.map((event, index) => `
+        <div class="admin-row">
+          <div>
+            <strong>${event.title}</strong>
+            <div class="muted">${event.level} | ${event.time}</div>
+          </div>
+          <div>${event.official || "官网待补充"}</div>
+          <div><span class="badge ${event.status}">${event.statusText}</span></div>
+          <button class="ghost-btn" type="button" onclick="loadEvent(${index})">编辑</button>
+        </div>
+      `).join("");
+    }
+
+    function loadEvent(index) {
+      const event = adminEvents[index];
+      document.getElementById("publishTitle").value = event.title;
+      document.getElementById("officialLink").value = event.official;
+      focusBlock("publisher");
+    }
+
+    function focusBlock(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function savePublishForm() {
+      const title = document.getElementById("publishTitle").value.trim();
+      const official = document.getElementById("officialLink").value.trim();
+      const item = adminEvents.find((event) => event.title === title);
+      if (item) {
+        item.official = official;
+      }
+      localStorage.setItem("wku-admin-official-link", official);
+      alert("赛事官网与发布信息已保存。");
+      renderRows();
+    }
+
+    function markLive() {
+      const title = document.getElementById("publishTitle").value.trim();
+      const item = adminEvents.find((event) => event.title === title);
+      if (item) {
+        item.status = "live";
+        item.statusText = "已发布";
+      }
+      renderRows();
+      alert("该赛事已设为前台可见的发布状态。");
+    }
+
+    function publishSelected() {
+      adminEvents.forEach((event) => {
+        if (event.official) {
+          event.status = "live";
+          event.statusText = "已发布";
+        }
+      });
+      renderRows();
+      alert("已将已填写官网链接的赛事批量发布。");
+    }
+
+    function saveHomepage() {
+      localStorage.setItem("wku-home-title", document.getElementById("homeTitle").value);
+      localStorage.setItem("wku-home-intro", document.getElementById("homeIntro").value);
+      localStorage.setItem("wku-home-button", document.getElementById("homeButtonText").value);
+      alert("首页文案已保存到本地管理配置。");
+    }
+
+    const savedUser = localStorage.getItem("wku-platform-user");
+    if (savedUser) {
+      document.getElementById("userChip").textContent = savedUser + " / 管理员";
+    }
+
+    const savedLink = localStorage.getItem("wku-admin-official-link");
+    if (savedLink) {
+      document.getElementById("officialLink").value = savedLink;
+    }
+
+    renderRows();
+  </script>
+</body>
+</html>
+

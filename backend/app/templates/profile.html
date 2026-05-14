@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel section narrow">
+  <span class="eyebrow">{{ t("nav_profile") }}</span>
+  <h1>{{ t("nav_profile") }}</h1>
+  {% if locked %}
+    <p>{{ t("profile_locked") }}</p>
+  {% else %}
+    <form class="stack" method="post" action="{{ url_for('web.profile') }}">
+      <input value="{{ user['real_name'] }}" disabled>
+      <input value="{{ user['student_id'] }}" disabled>
+      <textarea name="bio" placeholder="Bio">{{ user["bio"] }}</textarea>
+      <textarea name="skills" placeholder="Skills">{{ user["skills"] }}</textarea>
+      <textarea name="intention" placeholder="Intention">{{ user["intention"] }}</textarea>
+      <button class="btn primary" type="submit">{{ t("save") }}</button>
+    </form>
+    <div class="subpanel">
+      <h3>My Teams</h3>
+      {% for item in memberships %}
+        <div class="mini-card">
+          <strong>{{ item["name"] }}</strong>
+          <span>{{ item["target_event"] }}</span>
+          <small>{{ item["role"] }}</small>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

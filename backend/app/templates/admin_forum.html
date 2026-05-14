@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+{% set admin_title = "论坛管理" if current_lang != "en" else "Forum Management" %}
+{% set admin_intro = "这里查看论坛帖子，并决定隐藏、恢复或删除内容。" if current_lang != "en" else "Review forum posts here and hide, restore, or delete content as needed." %}
+{% include "_admin_nav.html" %}
+
+<section class="panel section">
+  <h2>{% if current_lang == "en" %}Forum Posts{% else %}帖子列表{% endif %}</h2>
+  <div class="stack">
+    {% for post in posts %}
+      <div class="mini-card">
+        <strong>{{ post["title"] }}</strong>
+        <span>@{{ post["username"] }}</span>
+        <small>{% if current_lang == "en" %}Status{% else %}状态{% endif %}: {{ post["status"] }}</small>
+        <small>{% if current_lang == "en" %}Published At{% else %}发布时间{% endif %}: {{ post["created_at"] }}</small>
+        <p>{{ post["content"] }}</p>
+        <div class="actions">
+          {% if post["status"] == "visible" %}
+            <form method="post" action="{{ url_for('web.admin_post_action', post_id=post['id'], action='hide') }}">
+              <input type="hidden" name="next" value="{{ url_for('web.admin_forum') }}">
+              <button class="btn ghost" type="submit">{% if current_lang == "en" %}Hide{% else %}隐藏{% endif %}</button>
+            </form>
+          {% else %}
+            <form method="post" action="{{ url_for('web.admin_post_action', post_id=post['id'], action='show') }}">
+              <input type="hidden" name="next" value="{{ url_for('web.admin_forum') }}">
+              <button class="btn secondary" type="submit">{% if current_lang == "en" %}Restore{% else %}恢复显示{% endif %}</button>
+            </form>
+          {% endif %}
+          <form method="post" action="{{ url_for('web.admin_post_action', post_id=post['id'], action='delete') }}">
+            <input type="hidden" name="next" value="{{ url_for('web.admin_forum') }}">
+            <button class="btn ghost danger-btn" type="submit">{% if current_lang == "en" %}Delete{% else %}删除{% endif %}</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="mini-card">
+        <strong>{% if current_lang == "en" %}No posts yet{% else %}暂时没有帖子{% endif %}</strong>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

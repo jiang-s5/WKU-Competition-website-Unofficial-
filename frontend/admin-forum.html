@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>论坛管理 - 管理员后台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-badge">坛</div>
+        <div>论坛管理后台</div>
+      </div>
+      <a class="admin-chip" href="admin-home.html">返回总览</a>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-menu-link" href="admin-home.html">管理总览</a>
+        <a class="admin-menu-link" href="admin-review.html">招募审核</a>
+        <a class="admin-menu-link" href="admin-feedback.html">意见反馈</a>
+        <a class="admin-menu-link active" href="admin-forum.html">论坛管理</a>
+        <a class="admin-menu-link" href="admin-users.html">用户管理</a>
+      </aside>
+
+      <main class="admin-main-panel">
+        <h1>论坛帖子管理</h1>
+        <p class="admin-subtitle">查看前台论坛帖子，并按需要隐藏或恢复显示。</p>
+        <div class="admin-list" id="forumPosts" style="margin-top:22px;"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function renderUserList(values, emptyText) {
+      return values && values.length ? values.map((item) => escapeHtml(item)).join("、") : emptyText;
+    }
+
+    function displayIdentity(record) {
+      return record && (record.authorUsername || record.author)
+        ? (record.authorUsername || record.author)
+        : "anonymous";
+    }
+
+    function renderPosts() {
+      const posts = PlatformData.getForumPosts();
+      document.getElementById("forumPosts").innerHTML = posts.length ? posts.map((item) => `
+        <article class="admin-card">
+          <h3>${escapeHtml(item.title)}</h3>
+          <p class="admin-meta">作者用户名：@${escapeHtml(displayIdentity(item))} ｜ 发布时间：${new Date(item.updatedAt || item.createdAt).toLocaleString("zh-CN", { hour12: false })}</p>
+          <p class="admin-text">${escapeHtml(item.content)}</p>
+          <div class="admin-metrics">
+            <span class="admin-metric-pill">浏览 ${PlatformData.getForumCounts(item).views}</span>
+            <span class="admin-metric-pill">赞同 ${PlatformData.getForumCounts(item).likes}</span>
+            <span class="admin-metric-pill">收藏 ${PlatformData.getForumCounts(item).favorites}</span>
+            <span class="admin-metric-pill">不赞同 ${PlatformData.getForumCounts(item).dislikes}</span>
+            <span class="admin-metric-pill">评论 ${PlatformData.getForumCounts(item).comments}</span>
+          </div>
+          <div class="admin-comment-block">
+            <p class="admin-meta">赞同用户：${renderUserList(item.likeUsers, "暂无")}</p>
+            <p class="admin-meta">收藏用户：${renderUserList(item.favoriteUsers, "暂无")}</p>
+            <p class="admin-meta">不赞同用户：${renderUserList(item.dislikeUsers, "暂无")}</p>
+            <div class="admin-comment-list">
+              ${(item.commentsList || []).length ? item.commentsList.map((comment) => `
+                <div class="admin-comment">
+                  <div class="admin-comment-head">
+                    <strong>@${escapeHtml(displayIdentity(comment))}</strong>
+                    <span>${new Date(comment.createdAt).toLocaleString("zh-CN", { hour12: false })}</span>
+                  </div>
+                  <div class="admin-comment-body">${escapeHtml(comment.content)}</div>
+                </div>
+              `).join("") : '<p class="admin-meta">暂无评论内容。</p>'}
+            </div>
+          </div>
+          <div class="admin-actions">
+            <span class="admin-status ${item.status === "visible" ? "live" : "draft"}">${item.status}</span>
+            <button class="admin-btn primary" type="button" onclick="updatePost(${item.id}, 'visible')">显示</button>
+            <button class="admin-btn secondary" type="button" onclick="updatePost(${item.id}, 'hidden')">隐藏</button>
+          </div>
+        </article>
+      `).join("") : '<div class="admin-card"><h3>暂无论坛帖子</h3><p class="admin-text">前台还没有新的论坛内容。</p></div>';
+    }
+
+    function updatePost(id, status) {
+      const result = PlatformData.setForumPostStatus(id, status);
+      if (!result.ok) return;
+      renderPosts();
+    }
+
+    renderPosts();
+  </script>
+</body>
+</html>

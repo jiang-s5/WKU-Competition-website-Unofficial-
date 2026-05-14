@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>寻找团队 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div>温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a href="browse.html">浏览赛事</a>
+        <a href="detail.html">赛事详情</a>
+        <a class="active" href="teams.html">寻找团队</a>
+        <a href="profile.html">个人主页</a>
+        <a href="feedback.html">意见反馈</a>
+        <a href="forum.html">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>寻找团队</h2>
+          <p class="muted">查看正在招募的队伍及其需求，支持按赛事和地点快速筛选，直接找到适合当前比赛的招募团队。</p>
+        </div>
+      </div>
+
+      <div class="form-grid" style="grid-template-columns: 1.6fr 1.2fr 1fr auto;">
+        <input class="input" id="teamKeyword" type="text" placeholder="搜索队伍名称、赛事、招募方向或关键词">
+        <select class="select" id="teamEventFilter"></select>
+        <select class="select" id="teamLocationFilter"></select>
+        <button class="btn btn-secondary" type="button" onclick="resetTeamFilters()">清除筛选</button>
+      </div>
+
+      <div id="teamFilterHint" class="team-filter-note" style="margin-top:16px;"></div>
+      <div class="grid-2" id="teamList"></div>
+    </section>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>创建新团队</h2>
+          <p class="muted">尚未找到合适队伍时，可以一键创建招募信息，主动召集你的专属参赛伙伴。</p>
+        </div>
+      </div>
+      <div class="form-grid" id="teamCreateForm">
+        <input class="input" id="teamName" type="text" placeholder="团队名称">
+        <select class="select" id="targetEvent"></select>
+        <input class="input" id="teamLocation" type="text" placeholder="组队地点 / 线上线下安排">
+        <input class="input" id="teamNeed" type="text" placeholder="招募方向">
+        <textarea class="textarea" id="teamDesc" rows="6" placeholder="介绍当前团队情况、成员需求与联系方式"></textarea>
+        <button class="btn btn-primary" type="button" onclick="createTeam()">发布招募信息</button>
+      </div>
+    </section>
+
+    <section class="panel section" id="captainPanel" style="display:none;">
+      <div class="section-head">
+        <div>
+          <h2>我的队伍管理</h2>
+          <p class="muted">如果你是队长，可以在这里审批加入申请，并管理当前成员。</p>
+        </div>
+      </div>
+      <div class="stack" id="captainTeams"></div>
+    </section>
+
+    <div class="footer">创建完成后可回到个人主页统一查看加入的队伍</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script src="frontend-i18n.js"></script>
+  <script>
+    const eventCatalog = [
+      { slug: "aigc-innovation", title: "中国高校计算机大赛AIGC创新赛" },
+      { slug: "digital-skills-computing", title: "全国大学生数字技能应用大赛计算机技能应用赛" },
+      { slug: "digital-ai-application", title: "全国大学生数字应用大赛人工智能应用赛" },
+      { slug: "ai-innovation-entrepreneurship", title: "全国大学生人工智能+创新创业大赛" }
+    ];
+
+    function getEventTitle(slug) {
+      const item = eventCatalog.find((event) => event.slug === slug);
+      return item ? item.title : "";
+    }
+
+    function getCurrentTeamFilters() {
+      return {
+        keyword: document.getElementById("teamKeyword").value.trim().toLowerCase(),
+        eventSlug: document.getElementById("teamEventFilter").value,
+        location: document.getElementById("teamLocationFilter").value
+      };
+    }
+
+    function renderEventOptions() {
+      const filter = document.getElementById("teamEventFilter");
+      const creator = document.getElementById("targetEvent");
+      filter.innerHTML = `
+        <option value="">全部赛事</option>
+        ${eventCatalog.map((event) => `<option value="${event.slug}">${event.title}</option>`).join("")}
+      `;
+      creator.innerHTML = `
+        <option value="">选择目标赛事</option>
+        ${eventCatalog.map((event) => `<option value="${event.slug}">${event.title}</option>`).join("")}
+      `;
+    }
+
+    function renderLocationOptions(selected = "") {
+      const locations = [...new Set(PlatformData.getTeams().map((team) => team.location || "地点待沟通"))];
+      const select = document.getElementById("teamLocationFilter");
+      select.innerHTML = `
+        <option value="">全部地点</option>
+        ${locations.map((location) => `<option value="${location}">${location}</option>`).join("")}
+      `;
+      select.value = selected;
+    }
+
+    function renderFilterHint(total, filters) {
+      const eventTitle = filters.eventSlug ? getEventTitle(filters.eventSlug) : "";
+      const parts = [];
+      if (eventTitle) parts.push(`当前赛事：${eventTitle}`);
+      if (filters.location) parts.push(`地点筛选：${filters.location}`);
+      if (filters.keyword) parts.push(`关键词：${filters.keyword}`);
+      document.getElementById("teamFilterHint").textContent = parts.length
+        ? `已筛选 ${total} 支队伍，${parts.join(" ｜ ")}`
+        : `当前展示全部 ${total} 支招募队伍。`;
+    }
+
+    function renderTeams() {
+      const filters = getCurrentTeamFilters();
+      const teams = PlatformData.getTeams().filter((item) => {
+        const haystack = [item.name, item.targetEvent, item.need, item.desc, item.captain, item.location, item.contact]
+          .join(" ")
+          .toLowerCase();
+        const matchKeyword = !filters.keyword || haystack.includes(filters.keyword);
+        const matchEvent = !filters.eventSlug
+          || item.eventSlug === filters.eventSlug
+          || item.targetEvent === getEventTitle(filters.eventSlug);
+        const matchLocation = !filters.location || (item.location || "地点待沟通") === filters.location;
+        return matchKeyword && matchEvent && matchLocation;
+      });
+
+      document.getElementById("teamList").innerHTML = teams.length ? teams.map((item) => `
+        <article class="card">
+          <div class="eyebrow">${item.eventSlug && filters.eventSlug === item.eventSlug ? "当前赛事相关队伍" : "正在招募"}</div>
+          <h3 style="margin-top:14px;">${item.name}</h3>
+          <p class="meta">目标赛事：${item.targetEvent}</p>
+          <p class="meta">组队地点：${item.location || "地点待沟通"}</p>
+          <p class="meta">需求方向：${item.need}</p>
+          <p class="meta">队长：${item.captain}</p>
+          <p class="muted">${item.desc}</p>
+          <div class="card-actions">
+            <button class="ghost-btn" type="button" onclick="contactCaptain('${item.contact}')">联系队长</button>
+            <button class="btn btn-secondary" type="button" onclick="joinTeam('${item.name}')">加入队伍</button>
+          </div>
+        </article>
+      `).join("") : `
+        <article class="card">
+          <div class="eyebrow">暂无匹配队伍</div>
+          <h3 style="margin-top:14px;">当前筛选下还没有找到合适队伍</h3>
+          <p class="muted">你可以放宽筛选条件，或者直接在下方创建新的招募信息，主动发起属于这个比赛的组队。</p>
+        </article>
+      `;
+      renderFilterHint(teams.length, filters);
+    }
+
+    function renderCaptainPanel() {
+      const currentUser = PlatformData.getCurrentUserName();
+      const myTeams = PlatformData.getTeams().filter((team) => team.captain === currentUser);
+      const panel = document.getElementById("captainPanel");
+      const container = document.getElementById("captainTeams");
+      if (!currentUser || !myTeams.length) {
+        panel.style.display = "none";
+        container.innerHTML = "";
+        return;
+      }
+      panel.style.display = "";
+      container.innerHTML = myTeams.map((team) => `
+        <article class="card">
+          <div class="eyebrow">队长管理</div>
+          <h3 style="margin-top:14px;">${team.name}</h3>
+          <p class="meta">当前成员：${team.members.join("、")}</p>
+          <div class="stack" style="margin-top:14px;">
+            <div>
+              <strong>待审批申请</strong>
+              ${(team.joinRequests || []).length ? team.joinRequests.map((request) => `
+                <div class="card-actions" style="margin-top:10px;">
+                  <span class="meta">${request.user}</span>
+                  <button class="btn btn-primary" type="button" onclick="approveRequest('${team.name}', ${request.id})">同意加入</button>
+                  <button class="btn btn-secondary" type="button" onclick="rejectRequest('${team.name}', ${request.id})">拒绝</button>
+                </div>
+              `).join("") : '<p class="muted">暂无新的加入申请。</p>'}
+            </div>
+            <div>
+              <strong>成员管理</strong>
+              ${team.members.map((member) => `
+                <div class="card-actions" style="margin-top:10px;">
+                  <span class="meta">${member}${member === team.captain ? "（队长）" : ""}</span>
+                  ${member === team.captain ? "" : `<button class="btn btn-secondary" type="button" onclick="removeMember('${team.name}', '${member}')">移出队伍</button>`}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function isLoggedIn() {
+      return !!PlatformData.getCurrentUserName();
+    }
+
+    function goLogin(message) {
+      localStorage.setItem("wku-platform-return", "teams.html" + window.location.search);
+      alert(message);
+      window.location.href = "index.html";
+    }
+
+    function requireAuth(actionText) {
+      if (!isLoggedIn()) {
+        goLogin("请先登录或注册后，再" + actionText + "。");
+        return false;
+      }
+      if (PlatformData.isBanned()) {
+        alert("当前账号已被封禁，无法继续执行该操作。");
+        return false;
+      }
+      return true;
+    }
+
+    function contactCaptain(contact) {
+      if (!requireAuth("联系队长")) return;
+      alert("联系方式：" + contact);
+    }
+
+    function joinTeam(teamName) {
+      if (!requireAuth("加入队伍")) return;
+      const result = PlatformData.requestJoinTeam(teamName);
+      if (result.reason === "member") {
+        alert("你已经是该队伍成员。");
+        return;
+      }
+      if (result.reason === "pending") {
+        alert("你已经提交过加入申请，请等待队长审核。");
+        return;
+      }
+      alert("你已提交加入 " + teamName + " 的申请，等待队长审核。");
+      renderCaptainPanel();
+    }
+
+    function createTeam() {
+      if (!requireAuth("创建新队伍")) return;
+      const selectedSlug = document.getElementById("targetEvent").value;
+      PlatformData.addTeamRequest({
+        teamName: document.getElementById("teamName").value.trim() || "未命名团队",
+        eventSlug: selectedSlug,
+        targetEvent: getEventTitle(selectedSlug) || "未填写目标赛事",
+        teamLocation: document.getElementById("teamLocation").value.trim() || "地点待沟通",
+        teamNeed: document.getElementById("teamNeed").value.trim() || "未填写招募方向",
+        teamDesc: document.getElementById("teamDesc").value.trim() || "暂无描述",
+        contact: PlatformData.getCurrentUserName()
+      });
+      alert("新的队伍招募信息已提交，等待后台审核后展示。");
+      document.getElementById("teamName").value = "";
+      document.getElementById("targetEvent").value = selectedSlug;
+      document.getElementById("teamLocation").value = "";
+      document.getElementById("teamNeed").value = "";
+      document.getElementById("teamDesc").value = "";
+    }
+
+    function approveRequest(teamName, requestId) {
+      PlatformData.approveJoinRequest(teamName, requestId);
+      renderTeams();
+      renderCaptainPanel();
+    }
+
+    function rejectRequest(teamName, requestId) {
+      PlatformData.rejectJoinRequest(teamName, requestId);
+      renderCaptainPanel();
+    }
+
+    function removeMember(teamName, memberName) {
+      PlatformData.removeTeamMember(teamName, memberName);
+      renderTeams();
+      renderCaptainPanel();
+    }
+
+    function updateGateState() {
+      const locked = !isLoggedIn();
+      const fields = document.querySelectorAll("#teamCreateForm input, #teamCreateForm textarea, #teamCreateForm select");
+      fields.forEach((field) => {
+        field.disabled = locked;
+      });
+      if (locked) {
+        document.getElementById("teamName").placeholder = "请先登录后创建队伍";
+      }
+    }
+
+    function statusText(key) {
+      return FrontendI18n.t("common", key) || {
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录"
+      }[key];
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "头";
+    }
+
+    function statusAvatarMarkup(user) {
+      if (user && user.avatar) {
+        return `<span class="status-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></span>`;
+      }
+      return `<span class="status-avatar"><span class="status-avatar-fallback">${initials(user && (user.name || user.username))}</span></span>`;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${statusText("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${statusText("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${statusText("signed_out")}</span>`;
+      }
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      window.location.href = "index.html";
+    }
+
+    function resetTeamFilters() {
+      document.getElementById("teamKeyword").value = "";
+      document.getElementById("teamEventFilter").value = "";
+      document.getElementById("teamLocationFilter").value = "";
+      renderTeams();
+    }
+
+    function applyEventContextFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const eventSlug = params.get("eventSlug") || "";
+      const location = params.get("location") || "";
+      if (eventSlug) {
+        document.getElementById("teamEventFilter").value = eventSlug;
+        document.getElementById("targetEvent").value = eventSlug;
+      }
+      if (location) {
+        renderLocationOptions(location);
+      }
+    }
+
+    document.getElementById("teamKeyword").addEventListener("input", renderTeams);
+    document.getElementById("teamEventFilter").addEventListener("change", renderTeams);
+    document.getElementById("teamLocationFilter").addEventListener("change", renderTeams);
+
+    renderEventOptions();
+    renderLocationOptions();
+    applyEventContextFromQuery();
+    renderTeams();
+    renderCaptainPanel();
+    updateGateState();
+    document.addEventListener("site-lang-change", renderStatus);
+    FrontendI18n.init("teams");
+    renderStatus();
+  </script>
+</body>
+</html>
+

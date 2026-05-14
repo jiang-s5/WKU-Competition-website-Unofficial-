@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+{% set admin_title = "意见反馈" if current_lang != "en" else "Feedback Management" %}
+{% set admin_intro = "这里查看前台提交的建议和问题，并更新处理状态。" if current_lang != "en" else "Review user feedback and update handling status here." %}
+{% include "_admin_nav.html" %}
+
+<section class="panel section">
+  <h2>{% if current_lang == "en" %}Feedback Queue{% else %}反馈列表{% endif %}</h2>
+  <div class="stack">
+    {% for item in feedback_items %}
+      <div class="mini-card">
+        <strong>@{{ item["username"] }}{% if item["real_name"] %} / {{ item["real_name"] }}{% endif %}</strong>
+        <span>{% if current_lang == "en" %}Status{% else %}状态{% endif %}: {{ item["status"] }}</span>
+        <small>{% if current_lang == "en" %}Submitted At{% else %}提交时间{% endif %}: {{ item["created_at"] }}</small>
+        <p>{{ item["content"] }}</p>
+        <div class="actions">
+          {% if item["status"] != "resolved" %}
+            <form method="post" action="{{ url_for('web.admin_feedback_action', feedback_id=item['id'], action='resolve') }}">
+              <input type="hidden" name="next" value="{{ url_for('web.admin_feedback') }}">
+              <button class="btn secondary" type="submit">{% if current_lang == "en" %}Mark Resolved{% else %}标记已处理{% endif %}</button>
+            </form>
+          {% else %}
+            <form method="post" action="{{ url_for('web.admin_feedback_action', feedback_id=item['id'], action='reopen') }}">
+              <input type="hidden" name="next" value="{{ url_for('web.admin_feedback') }}">
+              <button class="btn ghost" type="submit">{% if current_lang == "en" %}Reopen{% else %}重新打开{% endif %}</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="mini-card">
+        <strong>{% if current_lang == "en" %}No feedback yet{% else %}暂时没有反馈{% endif %}</strong>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

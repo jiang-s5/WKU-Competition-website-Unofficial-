@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid-two section">
+  <article class="panel">
+    <span class="eyebrow">{{ t("nav_forum") }}</span>
+    <h1>{{ t("nav_forum") }}</h1>
+    <div class="list">
+      {% for post in posts %}
+        <article class="list-card">
+          <strong>{{ post["title"] }}</strong>
+          <span>{{ post["real_name"] }} @{{ post["username"] }}</span>
+          <p>{{ post["content"] }}</p>
+        </article>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <span class="eyebrow">{{ t("publish_post") }}</span>
+    {% if current_user %}
+      <form class="stack" method="post" action="{{ url_for('web.forum') }}">
+        <input name="title" placeholder="Title" required>
+        <textarea name="content" placeholder="Content" required></textarea>
+        <button class="btn primary" type="submit">{{ t("publish_post") }}</button>
+      </form>
+      <div class="subpanel">
+        <h3>My Posts</h3>
+        {% for post in my_posts %}
+          <div class="mini-card">
+            <strong>{{ post["title"] }}</strong>
+            <form method="post" action="{{ url_for('web.delete_post', post_id=post['id']) }}">
+              <button class="btn ghost" type="submit">{{ t("delete") }}</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>{{ t("profile_locked") }}</p>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

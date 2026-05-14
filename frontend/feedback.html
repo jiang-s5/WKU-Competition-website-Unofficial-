@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>意见反馈 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div>温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a href="browse.html">浏览赛事</a>
+        <a href="detail.html">赛事详情</a>
+        <a href="teams.html">寻找团队</a>
+        <a href="profile.html">个人主页</a>
+        <a class="active" href="feedback.html">意见反馈</a>
+        <a href="forum.html">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>意见反馈</h2>
+          <p class="muted">如果没有找到你想要的赛事，或者想反馈页面问题、功能需求，都可以在这里提交。</p>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="card">
+          <div class="eyebrow">提交反馈</div>
+          <div class="form-grid" style="margin-top:16px;">
+            <input class="input" id="feedbackTitle" type="text" placeholder="反馈标题">
+            <select class="select" id="feedbackType">
+              <option value="赛事建议">赛事建议</option>
+              <option value="页面问题">页面问题</option>
+              <option value="功能需求">功能需求</option>
+              <option value="其他">其他</option>
+            </select>
+            <textarea class="textarea" id="feedbackContent" rows="8" placeholder="请输入你的反馈内容"></textarea>
+            <button class="btn btn-primary" type="button" onclick="submitFeedback()">提交反馈</button>
+          </div>
+        </div>
+
+        <div class="stack">
+          <article class="card">
+            <div class="eyebrow">提交说明</div>
+            <p class="muted" style="margin-top:14px;">反馈会同步进入管理员后台，方便平台统一查看、分类和处理。</p>
+            <p class="muted">建议尽量写清楚具体赛事名称、希望新增的功能，或者遇到的问题页面。</p>
+          </article>
+          <article class="card">
+            <div class="eyebrow">状态提示</div>
+            <p class="muted" id="feedbackStatus" style="margin-top:14px;">登录后即可提交反馈，后台能实时看到内容。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">反馈数据会同步到管理员后台的反馈管理页</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script src="frontend-i18n.js"></script>
+  <script>
+    function submitFeedback() {
+      const currentUser = PlatformData.getCurrentUserName();
+      if (!currentUser) {
+        localStorage.setItem("wku-platform-return", "feedback.html");
+        alert("请先登录或注册后再提交反馈。");
+        window.location.href = "index.html";
+        return;
+      }
+      if (PlatformData.isBanned()) {
+        alert("当前账号已被封禁，无法提交反馈。");
+        return;
+      }
+      PlatformData.addFeedback({
+        title: document.getElementById("feedbackTitle").value.trim() || "未命名反馈",
+        type: document.getElementById("feedbackType").value,
+        content: document.getElementById("feedbackContent").value.trim() || "未填写详细内容"
+      });
+      document.getElementById("feedbackStatus").textContent = "反馈已提交，管理员后台可以查看。";
+      document.getElementById("feedbackTitle").value = "";
+      document.getElementById("feedbackContent").value = "";
+      alert("反馈提交成功。");
+    }
+
+    function statusText(key) {
+      return FrontendI18n.t("common", key) || {
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录"
+      }[key];
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "头";
+    }
+
+    function statusAvatarMarkup(user) {
+      if (user && user.avatar) {
+        return `<span class="status-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></span>`;
+      }
+      return `<span class="status-avatar"><span class="status-avatar-fallback">${initials(user && (user.name || user.username))}</span></span>`;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${statusText("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${statusText("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${statusText("signed_out")}</span>`;
+      }
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      window.location.href = "index.html";
+    }
+
+    document.addEventListener("site-lang-change", renderStatus);
+    FrontendI18n.init("feedback");
+    renderStatus();
+  </script>
+</body>
+</html>
+

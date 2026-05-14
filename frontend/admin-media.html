@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>视频素材管理 - 管理员后台</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-page">
+    <header class="admin-topbar">
+      <div class="admin-brand">
+        <div class="admin-brand-badge">影</div>
+        <div>首页视频素材管理</div>
+      </div>
+      <a class="admin-chip" href="admin-home.html">返回总览</a>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-menu-link" href="admin-home.html">管理总览</a>
+        <a class="admin-menu-link" href="admin-review.html">招募审核</a>
+        <a class="admin-menu-link" href="admin-feedback.html">意见反馈</a>
+        <a class="admin-menu-link" href="admin-forum.html">论坛管理</a>
+        <a class="admin-menu-link" href="admin-users.html">用户管理</a>
+        <a class="admin-menu-link active" href="admin-media.html">视频素材</a>
+      </aside>
+
+      <main class="admin-main-panel">
+        <h1>首页滚动视频管理</h1>
+        <p class="admin-subtitle">管理员可以在这里更换首页视频材料、视频标题和引导文案。前台首页会实时读取这里的配置。</p>
+
+        <section class="admin-grid-2" style="margin-top:20px;">
+          <article class="admin-card">
+            <h2>素材配置</h2>
+            <div class="admin-form">
+              <input class="admin-input" id="videoSrc" type="text" placeholder="视频路径，例如 hero-video.mp4">
+              <input class="admin-input" id="videoTitle" type="text" placeholder="视频标题">
+              <textarea class="admin-textarea" id="videoSubtitle" rows="5" placeholder="视频副标题 / 引导文案"></textarea>
+              <div class="admin-actions">
+                <button class="admin-btn primary" type="button" onclick="saveVideoConfig()">保存配置</button>
+                <button class="admin-btn secondary" type="button" onclick="resetVideoConfig()">恢复默认</button>
+              </div>
+            </div>
+            <p class="admin-text" style="margin-top:14px;">
+              如果你要更换成本地新视频，请先把新视频放到项目目录，例如 `F:\new-hero.mp4`，然后这里填写相对路径 `new-hero.mp4`。
+            </p>
+          </article>
+
+          <article class="admin-card">
+            <h2>当前生效配置</h2>
+            <div class="admin-list">
+              <div class="admin-row">
+                <div><strong>视频文件</strong></div>
+                <div id="previewSrc" class="admin-meta">hero-video.mp4</div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="admin-row">
+                <div><strong>标题</strong></div>
+                <div id="previewTitle" class="admin-meta">温州肯恩大学AI社团竞赛平台</div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="admin-row">
+                <div><strong>副标题</strong></div>
+                <div id="previewSubtitle" class="admin-meta">向下滚动，镜头会随着页面推进逐步展开。</div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script>
+    function fillForm() {
+      const config = PlatformData.getHeroVideoConfig();
+      document.getElementById("videoSrc").value = config.src || "hero-video.mp4";
+      document.getElementById("videoTitle").value = config.title || "";
+      document.getElementById("videoSubtitle").value = config.subtitle || "";
+      document.getElementById("previewSrc").textContent = config.src || "hero-video.mp4";
+      document.getElementById("previewTitle").textContent = config.title || "";
+      document.getElementById("previewSubtitle").textContent = config.subtitle || "";
+    }
+
+    function saveVideoConfig() {
+      PlatformData.saveHeroVideoConfig({
+        src: document.getElementById("videoSrc").value.trim() || "hero-video.mp4",
+        title: document.getElementById("videoTitle").value.trim() || "温州肯恩大学AI社团竞赛平台",
+        subtitle: document.getElementById("videoSubtitle").value.trim() || "向下滚动，镜头会随着页面推进逐步展开。"
+      });
+      fillForm();
+      alert("首页视频配置已保存。");
+    }
+
+    function resetVideoConfig() {
+      PlatformData.saveHeroVideoConfig({
+        src: "hero-video.mp4",
+        title: "温州肯恩大学AI社团竞赛平台",
+        subtitle: "向下滚动，镜头会随着页面推进逐步展开。"
+      });
+      fillForm();
+      alert("已恢复默认视频配置。");
+    }
+
+    fillForm();
+  </script>
+</body>
+</html>
+

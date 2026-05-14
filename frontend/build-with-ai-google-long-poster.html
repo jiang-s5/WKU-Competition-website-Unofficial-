@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build with AI Wenzhou Long Poster</title>
+  <style>
+    :root {
+      --bg: #f3f1ec;
+      --surface: #fffdf9;
+      --text: #202124;
+      --muted: #5f6368;
+      --line: #202124;
+      --blue: #4285f4;
+      --red: #ea4335;
+      --yellow: #f9ab00;
+      --yellow-soft: #ffe7a5;
+      --green: #34a853;
+      --blue-soft: #c3ecf6;
+      --green-soft: #ccf6c5;
+      --shadow: 0 18px 36px rgba(32, 33, 36, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Google Sans", "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: start center;
+    }
+
+    .mono {
+      font-family: "Roboto Mono", "Consolas", "Courier New", monospace;
+    }
+
+    .poster {
+      position: relative;
+      width: 1400px;
+      height: 2480px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(195, 236, 246, 0.32), transparent 20%),
+        radial-gradient(circle at 88% 22%, rgba(204, 246, 197, 0.22), transparent 18%),
+        radial-gradient(circle at 66% 78%, rgba(255, 231, 165, 0.16), transparent 22%),
+        var(--bg);
+    }
+
+    .brand-row {
+      display: none;
+    }
+
+    .year-pill {
+      display: none;
+    }
+
+    .hero {
+      position: absolute;
+      left: 50%;
+      top: 42px;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 1080px;
+    }
+
+    .lockup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .brace {
+      position: relative;
+      width: 88px;
+      height: 286px;
+      border: 4px solid var(--line);
+      background: var(--yellow-soft);
+    }
+
+    .brace.left {
+      border-right: 0;
+      border-radius: 28px 0 0 28px;
+    }
+
+    .brace.right {
+      border-left: 0;
+      border-radius: 0 28px 28px 0;
+    }
+
+    .brace::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 30px;
+      height: 76px;
+      transform: translateY(-50%);
+      background: var(--yellow-soft);
+      border-top: 4px solid var(--line);
+      border-bottom: 4px solid var(--line);
+    }
+
+    .brace.left::before {
+      left: -2px;
+      border-right: 4px solid var(--line);
+      border-radius: 0 12px 12px 0;
+    }
+
+    .brace.right::before {
+      right: -2px;
+      border-left: 4px solid var(--line);
+      border-radius: 12px 0 0 12px;
+    }
+
+    .wordmark .line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      font-size: 152px;
+      line-height: 0.9;
+      font-weight: 900;
+      letter-spacing: -0.07em;
+    }
+
+    .wordmark .line + .line {
+      margin-top: 12px;
+    }
+
+    .spark {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      flex: 0 0 auto;
+      clip-path: polygon(25% 7%, 75% 7%, 100% 50%, 75% 93%, 25% 93%, 0 50%);
+      background: var(--blue);
+      border: 4px solid var(--line);
+    }
+
+    .spark::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 50px;
+      height: 50px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      background: var(--surface);
+      border: 4px solid var(--line);
+      border-radius: 16px 4px 16px 4px;
+    }
+
+    .location-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 24px;
+      padding: 16px 38px;
+      border: 4px solid var(--line);
+      border-radius: 999px;
+      background: #fffdf9;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-meta {
+      display: none;
+    }
+
+    .info-panel {
+      position: absolute;
+      left: 80px;
+      right: 80px;
+      top: 454px;
+      padding: 22px 28px 22px;
+      border: 3px solid rgba(32, 33, 36, 0.18);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 14px 28px rgba(32, 33, 36, 0.04);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .info-block {
+      padding: 4px 10px 10px;
+    }
+
+    .info-block + .info-block {
+      border-left: 2px solid rgba(32, 33, 36, 0.08);
+    }
+
+    .info-label {
+      font-size: 15px;
+      line-height: 1.3;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .info-title {
+      margin-top: 10px;
+      font-size: 34px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .info-text {
+      margin-top: 8px;
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .statement {
+      display: none;
+    }
+
+    .timeline-line {
+      position: absolute;
+      left: 699px;
+      top: 760px;
+      width: 4px;
+      height: 1180px;
+      border-radius: 999px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(32, 33, 36, 0.28) 0 12px,
+          transparent 12px 24px
+        );
+      opacity: 0.72;
+    }
+
+    .node {
+      position: absolute;
+      left: 681px;
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .node::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+    }
+
+    .node.blue::after { background: var(--blue); }
+    .node.yellow::after { background: var(--yellow); }
+    .node.green::after { background: var(--green); }
+    .node.red::after { background: var(--red); }
+
+    .n1 { top: 846px; }
+    .n2 { top: 1166px; }
+    .n3 { top: 1506px; }
+    .n4 { top: 1858px; }
+
+    .flow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .flow path {
+      fill: none;
+      stroke: var(--yellow);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 4 12;
+    }
+
+    .card {
+      position: absolute;
+      padding: 38px 34px 32px;
+      border: 4px solid var(--line);
+      border-radius: 34px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: -4px;
+      height: 20px;
+      border-top-left-radius: 34px;
+      border-top-right-radius: 34px;
+      border-top: 4px solid var(--line);
+      border-left: 4px solid var(--line);
+      border-right: 4px solid var(--line);
+    }
+
+    .card.blue::before { background: var(--blue); }
+    .card.yellow::before { background: var(--yellow); }
+    .card.green::before { background: var(--green); }
+    .card.red::before { background: var(--red); }
+
+    .card-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 10px 18px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      font-size: 17px;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .card.blue .card-tag { color: var(--blue); }
+    .card.yellow .card-tag { color: #d88900; }
+    .card.green .card-tag { color: var(--green); }
+    .card.red .card-tag { color: var(--red); }
+
+    .card-title {
+      margin: 18px 0 0;
+      font-size: 58px;
+      line-height: 0.96;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+
+    .card-sub {
+      margin-top: 8px;
+      font-size: 16px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .items {
+      margin-top: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      margin-top: 11px;
+      border-radius: 50%;
+    }
+
+    .blue .dot { background: var(--blue); }
+    .yellow .dot { background: var(--yellow); }
+    .green .dot { background: var(--green); }
+    .red .dot { background: var(--red); }
+
+    .item strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1.3;
+      font-weight: 800;
+    }
+
+    .item span {
+      display: block;
+      margin-top: 6px;
+      font-size: 18px;
+      line-height: 1.58;
+      color: var(--muted);
+    }
+
+    .opening {
+      left: 792px;
+      top: 760px;
+      width: 520px;
+      min-height: 390px;
+    }
+
+    .talks {
+      left: 94px;
+      top: 1040px;
+      width: 560px;
+      min-height: 354px;
+    }
+
+    .experience {
+      left: 802px;
+      top: 1388px;
+      width: 500px;
+      min-height: 314px;
+    }
+
+    .build {
+      left: 94px;
+      top: 1638px;
+      width: 612px;
+      min-height: 470px;
+    }
+
+    .quote {
+      position: absolute;
+      left: 760px;
+      top: 676px;
+      padding: 14px 20px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .deco {
+      position: absolute;
+      color: rgba(32, 33, 36, 0.18);
+      line-height: 1;
+      user-select: none;
+    }
+
+    .deco.one {
+      right: 150px;
+      top: 246px;
+      font-size: 68px;
+      color: rgba(66, 133, 244, 0.8);
+    }
+
+    .deco.two {
+      right: 130px;
+      top: 648px;
+      font-size: 104px;
+    }
+
+    .deco.three {
+      right: 248px;
+      top: 1210px;
+      font-size: 86px;
+      color: rgba(52, 168, 83, 0.22);
+    }
+
+    .deco.four {
+      right: 168px;
+      top: 2020px;
+      font-size: 64px;
+      color: rgba(251, 188, 4, 0.34);
+    }
+
+    .halftone {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      background:
+        radial-gradient(circle, rgba(249, 171, 0, 0.24) 0 2px, transparent 2px 100%),
+        radial-gradient(circle, rgba(66, 133, 244, 0.14) 0 2px, transparent 2px 100%);
+      background-size: 16px 16px, 16px 16px;
+      background-position: 0 0, 8px 8px;
+      mask-image: radial-gradient(circle at center, black 20%, transparent 74%);
+      -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 74%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .h1 { left: 564px; top: 884px; }
+    .h2 { left: 28px; top: 1148px; transform: rotate(8deg); }
+    .h3 { right: 90px; top: 1512px; }
+    .h4 { left: 260px; top: 1866px; width: 360px; height: 360px; opacity: 0.7; }
+
+    .org-band {
+      position: absolute;
+      left: 70px;
+      right: 70px;
+      bottom: 42px;
+      padding: 22px 24px 18px;
+      border: 3px solid rgba(32, 33, 36, 0.14);
+      border-radius: 34px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 12px 24px rgba(32, 33, 36, 0.04);
+    }
+
+    .org-head {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .org-head strong {
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .org-head span {
+      font-size: 15px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .logo-tile {
+      min-height: 132px;
+      padding: 14px 14px 12px;
+      border: 3px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .logo-frame {
+      width: 100%;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+    }
+
+    .logo-frame img {
+      max-width: 100%;
+      max-height: 72px;
+      display: block;
+    }
+
+    .logo-frame.dark {
+      background: #1e2d42;
+      padding: 6px;
+    }
+
+    .logo-caption {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .datawhale-mark {
+      width: 68px;
+      height: 68px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .footer-note {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 34px;
+      text-align: center;
+      font-size: 15px;
+      color: rgba(95, 99, 104, 0.95);
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <div class="brand-row">
+      <img class="brand-logo" src="logo-cropped/3.png" alt="GDG logo" />
+      <div class="brand-copy">
+        <strong>Google Developer Groups</strong>
+        <span class="mono">Wenzhou, China</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="lockup">
+        <div class="brace left" aria-hidden="true"></div>
+        <div class="wordmark">
+          <div class="line">
+            <span>Build</span>
+            <span class="spark" aria-hidden="true"></span>
+          </div>
+          <div class="line"><span>with AI</span></div>
+        </div>
+        <div class="brace right" aria-hidden="true"></div>
+      </div>
+      <div class="location-pill">Wenzhou Kean University</div>
+      <div class="hero-meta">
+        <div class="hero-chip mono">04.26 / SAT</div>
+        <div class="hero-chip mono">13:30 - 17:30</div>
+        <div class="hero-chip">GHK 中庭</div>
+      </div>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-grid">
+        <div class="info-block">
+          <div class="info-label">这次不只是讲</div>
+          <div class="info-title">讲座 + Workshop + 实操产出</div>
+          <div class="info-text">从理解、实操到产出，完整走一遍 AI 落地过程。每个人都能在现场做出点东西。</div>
+        </div>
+
+        <div class="info-block">
+          <div class="info-label">Audience</div>
+          <div class="info-title">开放参与</div>
+          <div class="info-text">全校及社会所有对 AI 感兴趣的人，不限专业背景。</div>
+        </div>
+
+        <div class="info-block">
+          <div class="info-label">Why build</div>
+          <div class="info-title">真正落地</div>
+          <div class="info-text">从科研工作流到模型微调与部署，让 AI 从概念走到可运行的应用。</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="timeline-line"></div>
+    <div class="node blue n1"></div>
+    <div class="node yellow n2"></div>
+    <div class="node green n3"></div>
+    <div class="node red n4"></div>
+
+    <div class="quote mono">Not just talk. Build on site.</div>
+
+    <div class="halftone h1"></div>
+    <div class="halftone h2"></div>
+    <div class="halftone h3"></div>
+    <div class="halftone h4"></div>
+
+    <div class="deco one mono">*</div>
+    <div class="deco two mono">//</div>
+    <div class="deco three mono">@</div>
+    <div class="deco four mono">&lt;3</div>
+
+    <svg class="flow" viewBox="0 0 1400 2480" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M 701 866 C 740 866, 760 882, 792 882" />
+      <path d="M 701 1186 C 642 1186, 628 1212, 654 1212" />
+      <path d="M 701 1526 C 744 1526, 770 1540, 802 1540" />
+      <path d="M 701 1878 C 642 1878, 626 1912, 706 1912" />
+    </svg>
+
+    <section class="card blue opening">
+      <div class="card-tag">Opening</div>
+      <h2 class="card-title">活动开场</h2>
+      <div class="card-sub mono">Kickoff &amp; overview</div>
+
+      <div class="items">
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>领导嘉宾发言</strong>
+            <span>邀请领导与嘉宾为本次 Build with AI 致辞，建立现场氛围并点明活动主题。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>AI Agent 引入</strong>
+            <span>通过贴近场景的方式引入 AI agent 概念，帮助大家快速进入今天的主题语境。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>活动内容概述</strong>
+            <span>由主办方介绍整场活动结构、互动方式与现场实践安排，让参与路径更清晰。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>AI 知识分享</strong>
+            <span>在开场部分建立基础认知，帮助不同背景的参与者都能顺畅进入后续内容。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card yellow talks">
+      <div class="card-tag">Sharing</div>
+      <h2 class="card-title">AI 知识分享</h2>
+      <div class="card-sub mono">Frontier + research workflow</div>
+
+      <div class="items">
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>Harness Engineering 深度分享</strong>
+            <span>从工程视角拆解 AI 系统如何被真正构建出来，看懂能力、架构与落地流程。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>Claude Code 科研实战</strong>
+            <span>从文献综述到研究洞察，一整套工作流现场跑通，真正看到 AI 如何服务学习与研究。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card green experience">
+      <div class="card-tag">Experience</div>
+      <h2 class="card-title">茶歇与体验</h2>
+      <div class="card-sub mono">Connect &amp; interact</div>
+
+      <div class="items">
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>开发者面对面交流</strong>
+            <span>和讲者、开发者、同学直接交流，获得真实的经验与灵感。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>技术体验区 &amp; AI 互动区</strong>
+            <span>不是看完就走，而是可以上手体验、边聊边试、真正参与的现场。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card red build">
+      <div class="card-tag">Build</div>
+      <h2 class="card-title">项目实战</h2>
+      <div class="card-sub mono">Hands-on building</div>
+
+      <div class="items">
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>Gemma4 × 多设备智能体</strong>
+            <span>手机 + 大模型协同，让 AI 从“工具”变成“系统”，看到更完整的交互方式。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>Fine Tuning Gemma</strong>
+            <span>不只是使用模型，而是进一步让模型适配你的数据、任务和具体场景。</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="dot"></div>
+          <div>
+            <strong>OpenClaw 部署实操</strong>
+            <span>从部署到运行，完成一个真正可以跑起来、可以展示的 AI 应用。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="org-band">
+      <div class="org-head">
+        <strong>联合发起</strong>
+        <span class="mono">Co-organized by</span>
+      </div>
+
+      <div class="logo-grid">
+        <article class="logo-tile">
+          <div class="logo-frame">
+            <img src="logo-cropped/2.png" alt="WKU CSMT logo" />
+          </div>
+          <div class="logo-caption">温州肯恩理工学院<br>计算机科学与技术系</div>
+        </article>
+        <article class="logo-tile">
+          <div class="logo-frame">
+            <img src="logo-cropped/3.png" alt="GDG Wenzhou logo" />
+          </div>
+          <div class="logo-caption">Google Developer Groups<br>温州站</div>
+        </article>
+        <article class="logo-tile">
+          <div class="logo-frame">
+            <img src="logo-cropped/4.png" alt="WZSIA AI logo" />
+          </div>
+          <div class="logo-caption">温州市软件行业协会<br>人工智能专业委员会</div>
+        </article>
+        <article class="logo-tile">
+          <div class="logo-frame dark">
+            <img class="datawhale-mark" src="logo-cropped/datawhale-mark.svg" alt="Datawhale logo" />
+          </div>
+          <div class="logo-caption">开源学习组织<br>技术共建支持</div>
+        </article>
+        <article class="logo-tile">
+          <div class="logo-frame">
+            <img src="logo-cropped/5.png" alt="AI Club logo" />
+          </div>
+          <div class="logo-caption">温州肯恩大学<br>AI 社团</div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer-note mono">Build with AI • WenZhou Kean University • 2026</div>
+  </main>
+</body>
+</html>

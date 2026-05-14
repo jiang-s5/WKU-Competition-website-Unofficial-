@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>赛事详情 - 温州肯恩大学AI社团竞赛平台</title>
+  <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">科</div>
+        <div>温州肯恩大学AI社团竞赛平台</div>
+      </div>
+      <nav class="nav">
+        <a href="index.html">首页</a>
+        <a href="browse.html">浏览赛事</a>
+        <a class="active" href="detail.html">赛事详情</a>
+        <a href="teams.html">寻找团队</a>
+        <a href="profile.html">个人主页</a>
+        <a href="feedback.html">意见反馈</a>
+        <a href="forum.html">论坛</a>
+      </nav>
+      <div class="topbar-actions">
+        <div id="langSwitcher"></div>
+        <div id="statusSlot"></div>
+      </div>
+    </header>
+
+    <section class="panel section">
+      <div class="section-head">
+        <div>
+          <h2>赛事详情页</h2>
+          <p class="muted">比赛名称、类别、简介、时间、地点、参考资料与官网链接集中展示。</p>
+        </div>
+        <a class="btn btn-primary" id="detailTeamLink" href="teams.html?eventSlug=aigc-innovation">寻找团队</a>
+      </div>
+
+      <div class="split">
+        <div class="stack">
+          <article class="card">
+            <div class="eyebrow">赛事详情</div>
+            <h3 id="detailTitle" style="margin-top:14px;">中国高校计算机大赛AIGC创新赛</h3>
+            <div class="tags" style="margin:14px 0;">
+              <span class="pill-link" id="detailCategoryTag">AIGC</span>
+              <span class="pill-link" id="detailLevelTag">国家级</span>
+              <span class="pill-link" id="detailStatusTag">官网信息</span>
+            </div>
+            <p class="muted" id="detailSummary">聚焦 AIGC 创新应用与实践展示，具体规则、日程与报名要求请以官网公布为准。</p>
+          </article>
+
+          <article class="card">
+            <h3>参考资料</h3>
+            <div class="stack">
+              <a class="pill-link" id="detailReferenceLink" href="https://aigc.vivo.com.cn/#/home" target="_blank" rel="noreferrer">官方通知与报名信息</a>
+            </div>
+          </article>
+        </div>
+
+        <aside class="stack">
+          <article class="card">
+            <h3>关键信息</h3>
+            <p class="meta" id="detailTime">时间：报名与赛程以官网公布为准</p>
+            <p class="meta" id="detailPlace">地点：参赛形式与地点以官网公布为准</p>
+            <p class="meta" id="detailCategory">类别：AIGC</p>
+            <p class="meta" id="detailLevel">级别：国家级</p>
+          </article>
+          <article class="card">
+            <h3>竞赛官网</h3>
+            <a class="btn btn-secondary" id="detailOfficialLink" href="https://aigc.vivo.com.cn/#/home" target="_blank" rel="noreferrer">直达赛事官网</a>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <div class="footer">从这里可以继续跳转到团队页</div>
+  </div>
+
+  <script src="platform-data.js"></script>
+  <script src="frontend-i18n.js"></script>
+  <script>
+    function statusText(key) {
+      return FrontendI18n.t("common", key) || {
+        signed_in: "已登录",
+        signed_out: "未登录",
+        logout: "退出登录"
+      }[key];
+    }
+
+    function initials(name) {
+      const value = (name || "").trim();
+      return value ? value.slice(0, 1).toUpperCase() : "头";
+    }
+
+    function statusAvatarMarkup(user) {
+      if (user && user.avatar) {
+        return `<span class="status-avatar"><img src="${user.avatar}" alt="avatar" class="avatar-image"></span>`;
+      }
+      return `<span class="status-avatar"><span class="status-avatar-fallback">${initials(user && (user.name || user.username))}</span></span>`;
+    }
+
+    function renderStatus() {
+      const slot = document.getElementById("statusSlot");
+      const user = PlatformData.getCurrentUser();
+      if (user) {
+        slot.innerHTML = `
+          <details class="status-menu">
+            <summary class="status-chip">
+              ${statusAvatarMarkup(user)}
+              <span class="status-chip-label">${statusText("signed_in")}</span>
+              <span class="status-arrow">v</span>
+            </summary>
+            <div class="status-dropdown">
+              <button type="button" class="status-action" onclick="logoutUser()">${statusText("logout")}</button>
+            </div>
+          </details>
+        `;
+      } else {
+        slot.innerHTML = `<span class="status-chip muted-status">${statusText("signed_out")}</span>`;
+      }
+    }
+
+    function logoutUser() {
+      PlatformData.logoutCurrentUser();
+      window.location.href = "index.html";
+    }
+
+    const competitions = {
+      "aigc-innovation": {
+        title: "中国高校计算机大赛AIGC创新赛",
+        category: "AIGC",
+        level: "国家级",
+        summary: "聚焦 AIGC 创新应用与实践展示，具体规则、日程与报名要求请以官网公布为准。",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        official: "https://aigc.vivo.com.cn/#/home"
+      },
+      "digital-skills-computing": {
+        title: "全国大学生数字技能应用大赛计算机技能应用赛",
+        category: "计算机技能应用",
+        level: "国家级",
+        summary: "面向计算机技能应用方向，具体赛项说明、报名方式与时间安排请以官网公布为准。",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        official: "https://www.cnccac.com/"
+      },
+      "digital-ai-application": {
+        title: "全国大学生数字应用大赛人工智能应用赛",
+        category: "人工智能应用",
+        level: "国家级",
+        summary: "聚焦人工智能应用实践方向，具体赛道设置、报名流程与时间请以官网公布为准。",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        official: "https://www.cnccac.com/rgzn"
+      },
+      "ai-innovation-entrepreneurship": {
+        title: "全国大学生人工智能+创新创业大赛",
+        category: "人工智能+创新创业",
+        level: "国家级",
+        summary: "面向人工智能与创新创业结合方向，赛程、规则和报名要求请以官网公布为准。",
+        time: "报名与赛程以官网公布为准",
+        place: "参赛形式与地点以官网公布为准",
+        official: "http://rgzn.52jingsai.com"
+      }
+    };
+
+    function renderDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug") || "aigc-innovation";
+      const detail = competitions[slug] || competitions["aigc-innovation"];
+      document.getElementById("detailTitle").textContent = detail.title;
+      document.getElementById("detailCategoryTag").textContent = detail.category;
+      document.getElementById("detailLevelTag").textContent = detail.level;
+      document.getElementById("detailSummary").textContent = detail.summary;
+      document.getElementById("detailTime").textContent = `时间：${detail.time}`;
+      document.getElementById("detailPlace").textContent = `地点：${detail.place}`;
+      document.getElementById("detailCategory").textContent = `类别：${detail.category}`;
+      document.getElementById("detailLevel").textContent = `级别：${detail.level}`;
+      document.getElementById("detailOfficialLink").href = detail.official;
+      document.getElementById("detailReferenceLink").href = detail.official;
+      document.getElementById("detailTeamLink").href = `teams.html?eventSlug=${encodeURIComponent(slug)}`;
+    }
+
+    document.addEventListener("site-lang-change", renderStatus);
+    FrontendI18n.init("detail");
+    renderStatus();
+    renderDetail();
+  </script>
+</body>
+</html>
+
