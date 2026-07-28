@@ -3,6 +3,8 @@ name: Temp Whisper Model
 on:
   push:
     branches: [temp-whisper-model]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
