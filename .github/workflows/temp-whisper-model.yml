@@ -1,0 +1,22 @@
+name: Temp Whisper Model
+
+on:
+  push:
+    branches: [temp-whisper-model]
+  workflow_dispatch:
+
+jobs:
+  download-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download multilingual base model
+        run: |
+          curl -L --fail --retry 3 -o ggml-base.bin https://mirrors.aliyun.com/macports/distfiles/whisper/ggml-base.bin
+          ls -lh ggml-base.bin
+      - name: Upload model
+        uses: actions/upload-artifact@v4
+        with:
+          name: ggml-base-bin
+          path: ggml-base.bin
+          compression-level: 0
+          retention-days: 1
